@@ -11,6 +11,12 @@ An AI-powered Excel assistant. Learn Excel functions and formulas through intera
 | AI | Claude Sonnet via emergentintegrations |
 | Payments | Razorpay (INR) |
 
+## Prerequisites
+
+- Python 3.10+
+- Node.js 18+ and Yarn
+- MongoDB 6.0+
+
 ## Quick start
 
 See [LOCAL_SETUP.md](LOCAL_SETUP.md) for full local setup instructions including MongoDB, backend, and frontend configuration.
