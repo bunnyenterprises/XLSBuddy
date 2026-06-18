@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($env:PATH = $env:PATH + \";C:\\\\Program Files\\\\GitHub CLI\"; Set-Location \"C:\\\\Users\\\\rajel\\\\OneDrive\\\\Desktop\\\\my project\\\\xlsbuddy\"; git add README.md; git commit -m \"docs: add prerequisites section to README\"; git push 2>&1)"
+    ]
+  }
+}
