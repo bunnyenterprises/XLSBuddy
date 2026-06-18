@@ -30,10 +30,11 @@ export default function Admin() {
   const [settings, setSettings] = useState(null);
   const [showSecret, setShowSecret] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
-  const filteredFormulas = formulas.filter((f) =>
   const [editingTutorial, setEditingTutorial] = useState(null);
   const [showEditTutorial, setShowEditTutorial] = useState(false);
-    f.name?.toLowerCase().includes(formulaSearch.toLowerCase())
+    
+  const filteredFormulas = formulas.filter((f) =>
+     f.name?.toLowerCase().includes(formulaSearch.toLowerCase())
   );
   
 

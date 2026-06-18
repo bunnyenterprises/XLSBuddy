@@ -5,7 +5,14 @@ import { api } from "@/lib/api";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { ArrowLeft, BookmarkSimple, BookmarkSimpleFill } from "@phosphor-icons/react";
+import {
+  ArrowLeft,
+  ChatCircleDots,
+  Function as FunctionIcon,
+  Copy,
+  Check,
+  BookmarkSimple
+} from "@phosphor-icons/react";
 
 function renderMarkdown(md) {
   if (!md) return "";
@@ -107,7 +114,7 @@ export default function TutorialDetail() {
             className="rounded-none border-foreground/20"
           >
             {bookmarked
-              ? <><BookmarkSimpleFill size={15} className="mr-1.5 klein" /> Saved</>
+              ? <><BookmarkSimple size={15} className="mr-1.5 klein" /> Saved</>
               : <><BookmarkSimple size={15} className="mr-1.5" /> Bookmark</>
             }
           </Button>

@@ -3,7 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
-import { BookmarkSimpleFill, BookOpen, Function as FunctionIcon, Trash } from "@phosphor-icons/react";
+import {
+  BookmarkSimple,
+  BookOpen,
+  Function as FunctionIcon,
+  Trash
+} from "@phosphor-icons/react";
 import { Badge } from "@/components/ui/badge";
 
 export default function Bookmarks() {
@@ -58,7 +63,7 @@ export default function Bookmarks() {
           <div className="overline text-muted-foreground">Loading…</div>
         ) : bookmarks.length === 0 ? (
           <div className="border border-foreground/15 p-16 text-center">
-            <BookmarkSimpleFill size={40} className="text-foreground/20 mx-auto mb-4" />
+            <BookmarkSimple size={40} weight="fill" className="text-foreground/20 mx-auto mb-4" />
             <div className="overline mb-2">// NO BOOKMARKS YET</div>
             <p className="text-muted-foreground text-sm mb-6">Browse functions and tutorials and hit Bookmark to save them here.</p>
             <div className="flex gap-4 justify-center">

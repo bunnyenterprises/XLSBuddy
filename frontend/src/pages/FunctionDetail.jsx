@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, ChatCircleDots, Function as FunctionIcon, Copy, Check, BookmarkSimple, BookmarkSimpleFill } from "@phosphor-icons/react";
+import { ArrowLeft, ChatCircleDots, Function as FunctionIcon, Copy, Check, BookmarkSimple } from "@phosphor-icons/react";
 
 export default function FunctionDetail() {
   const { id } = useParams();
@@ -102,7 +102,7 @@ export default function FunctionDetail() {
               data-testid="bookmark-button"
             >
               {bookmarked
-                ? <><BookmarkSimpleFill size={18} className="mr-2 klein" /> Bookmarked</>
+                ? <><BookmarkSimple size={18} className="mr-2 klein" /> Bookmarked</>
                 : <><BookmarkSimple size={18} className="mr-2" /> Bookmark</>
               }
             </Button>
