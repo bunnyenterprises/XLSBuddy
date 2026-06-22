@@ -10,12 +10,12 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone
 
+ROOT_DIR = Path(__file__).parent
+load_dotenv(str(ROOT_DIR / '.env'))
+
 from auth import hash_password, verify_password, create_token, get_current_user_id
 from seed_data import EXCEL_FUNCTIONS, TUTORIALS
-from admin import build_admin_router, ADMIN_EMAIL, get_settings
-
-ROOT_DIR = Path(__file__).parent
-load_dotenv(ROOT_DIR / '.env')
+from admin import build_admin_router, ADMIN_EMAIL, get_settings, require_admin
 
 
 mongo_url = os.environ['MONGO_URL']
@@ -119,7 +119,8 @@ async def list_functions(category: Optional[str] = None, search: Optional[str] =
     funcs = await db.excel_functions.find(query, {"_id": 0}).sort("name", 1).to_list(500)
     return funcs
 @api_router.post("/admin/formulas")
-async def create_formula(payload: dict):
+async def create_formula(payload: dict, user_id: str = Depends(get_current_user_id)):
+    await require_admin(db, user_id)
     formula = {
         "id": str(uuid.uuid4()),
         "name": payload.get("name"),
@@ -129,12 +130,13 @@ async def create_formula(payload: dict):
         "example": payload.get("example", ""),
         "difficulty": payload.get("difficulty", "Beginner"),
     }
-
     await db.excel_functions.insert_one(formula)
-
+    formula.pop("_id", None)
     return formula
+
 @api_router.put("/admin/formulas/{formula_id}")
-async def update_formula(formula_id: str, payload: dict):
+async def update_formula(formula_id: str, payload: dict, user_id: str = Depends(get_current_user_id)):
+    await require_admin(db, user_id)
     result = await db.excel_functions.update_one(
         {"id": formula_id},
         {
@@ -148,13 +150,16 @@ async def update_formula(formula_id: str, payload: dict):
             }
         }
     )
-
     if result.matched_count == 0:
-        raise HTTPException(
-            status_code=404,
-            detail="Formula not found"
-        )
+        raise HTTPException(status_code=404, detail="Formula not found")
+    return {"success": True}
 
+@api_router.delete("/admin/formulas/{formula_id}")
+async def delete_formula(formula_id: str, user_id: str = Depends(get_current_user_id)):
+    await require_admin(db, user_id)
+    result = await db.excel_functions.delete_one({"id": formula_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Formula not found")
     return {"success": True}
 
 @api_router.get("/functions/categories")
@@ -470,18 +475,29 @@ async def seed_db():
         {"email": ADMIN_EMAIL},
         {"$set": {"is_admin": True}}
     )
-    # Seed Excel functions — re-seed if any doc is missing visual_example (schema migration)
+    # Seed Excel functions — re-seed whenever schema fields are missing
     needs_reseed = await db.excel_functions.count_documents({}) == 0
     if not needs_reseed:
         sample = await db.excel_functions.find_one({}, {"_id": 0})
-        if sample and "visual_example" not in sample:
+        if sample and (
+            "visual_example" not in sample
+            or "video_url" not in sample
+            or "simple_explanation" not in sample
+        ):
             needs_reseed = True
     if needs_reseed:
         await db.excel_functions.delete_many({})
         docs = [{**f, "id": str(uuid.uuid4())} for f in EXCEL_FUNCTIONS]
         await db.excel_functions.insert_many(docs)
         logger.info(f"Seeded {len(docs)} Excel functions")
-    if await db.tutorials.count_documents({}) == 0:
+    # Re-seed tutorials if is_pro field is missing
+    needs_tutorial_reseed = await db.tutorials.count_documents({}) == 0
+    if not needs_tutorial_reseed:
+        t_sample = await db.tutorials.find_one({}, {"_id": 0})
+        if t_sample and "is_pro" not in t_sample:
+            needs_tutorial_reseed = True
+    if needs_tutorial_reseed:
+        await db.tutorials.delete_many({})
         docs = [{**t, "id": str(uuid.uuid4())} for t in TUTORIALS]
         await db.tutorials.insert_many(docs)
         logger.info(f"Seeded {len(docs)} tutorials")
@@ -492,44 +508,3 @@ async def seed_db():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     client.close()
-@app.get("/api/admin/stats")
-async def admin_stats(current_user=Depends(get_current_user_id)):
-
-    if not current_user.get("is_admin"):
-        raise HTTPException(status_code=403, detail="Admin access required")
-
-    total_users = await db.users.count_documents({})
-    pro_users = await db.users.count_documents({"is_pro": True})
-    admin_users = await db.users.count_documents({"is_admin": True})
-
-    return {
-        "total_users": total_users,
-        "pro_users": pro_users,
-        "admin_users": admin_users
-    }
-
-    total_users = await db.users.count_documents({})
-    pro_users = await db.users.count_documents({"is_pro": True})
-    admin_users = await db.users.count_documents({"is_admin": True})
-
-    return {
-        "total_users": total_users,
-        "pro_users": pro_users,
-        "admin_users": admin_users
-    }
-@app.get("/api/admin/all-users")
-async def get_all_users(current_user=Depends(get_current_user_id)):
-
-    users = await db.users.find(
-        {},
-        {
-            "password_hash": 0
-        }
-    ).to_list(1000)
-
-    return users
-print("TUTORIAL ROUTE TEST")
-
-print("create_tutorial exists:", "create_tutorial" in globals())
-print("update_tutorial exists:", "update_tutorial" in globals())
-print("delete_tutorial exists:", "delete_tutorial" in globals())

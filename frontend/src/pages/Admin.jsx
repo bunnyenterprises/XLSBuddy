@@ -436,7 +436,7 @@ setTutorials(t.data);
                      Edit
                    </button>
                    </td>
-                 </ tr>
+                 </tr>
                ))}
              </tbody>
            </table>

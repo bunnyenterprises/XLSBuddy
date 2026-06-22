@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from fastapi import HTTPException, Depends, Header
 from typing import Optional
 
-load_dotenv(Path(__file__).parent / ".env")
+load_dotenv(str(Path(__file__).parent / ".env"))
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALG = "HS256"
 JWT_EXP_DAYS = 30

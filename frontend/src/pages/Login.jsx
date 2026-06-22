@@ -22,7 +22,11 @@ export default function Login() {
       toast.success("Welcome back!");
       navigate("/dashboard");
     } catch (err) {
-      toast.error(err.response?.data?.detail || "Login failed");
+      if (!err.response) {
+        toast.error("Cannot reach server. Please start the backend first.");
+      } else {
+        toast.error(err.response?.data?.detail || "Login failed");
+      }
     } finally {
       setLoading(false);
     }

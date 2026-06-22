@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, ChatCircleDots, Function as FunctionIcon, Copy, Check, BookmarkSimple } from "@phosphor-icons/react";
+import { ArrowLeft, ChatCircleDots, Function as FunctionIcon, Copy, Check, BookmarkSimple, YoutubeLogo } from "@phosphor-icons/react";
 
 export default function FunctionDetail() {
   const { id } = useParams();
@@ -17,10 +17,10 @@ export default function FunctionDetail() {
   const [copiedExample, setCopiedExample] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [explanationLang, setExplanationLang] = useState("en");
 
   useEffect(() => {
     api.get(`/functions/${id}`).then((r) => setFunc(r.data)).finally(() => setLoading(false));
-    // Load bookmark state
     api.get("/bookmarks").then((r) => {
       const bm = r.data.find((b) => b.item_id === id);
       setBookmarked(!!bm);
@@ -66,6 +66,9 @@ export default function FunctionDetail() {
     </div>
   );
 
+  const hasSimpleExplanation = func.simple_explanation || func.simple_explanation_hindi;
+  const hasVideos = func.video_url || func.video_url_hindi;
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 dark:text-white">
       <Header />
@@ -109,6 +112,7 @@ export default function FunctionDetail() {
           </div>
         </div>
 
+        {/* ── Syntax + Example ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-l border-t border-foreground/15">
           <div className="border-r border-b border-foreground/15 p-8 bg-white dark:bg-gray-900">
             <div className="flex items-center justify-between mb-3">
@@ -142,12 +146,109 @@ export default function FunctionDetail() {
           </div>
         </div>
 
+        {/* ── Simple Explanation (10-year-old) ── */}
+        {hasSimpleExplanation && (
+          <section className="mt-10" data-testid="simple-explanation-section">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <div className="overline klein mb-1">// EXPLAIN LIKE I'M 10</div>
+                <h2 className="text-2xl font-black tracking-tighter">Simple Explanation</h2>
+              </div>
+              {/* Language toggle */}
+              {func.simple_explanation && func.simple_explanation_hindi && (
+                <div className="flex border border-foreground/20 rounded-none overflow-hidden">
+                  <button
+                    onClick={() => setExplanationLang("en")}
+                    className={`px-4 py-2 text-xs font-bold tracking-wider transition-colors ${
+                      explanationLang === "en"
+                        ? "bg-klein text-white"
+                        : "bg-white text-foreground hover:bg-secondary dark:bg-gray-900"
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    onClick={() => setExplanationLang("hi")}
+                    className={`px-4 py-2 text-xs font-bold tracking-wider transition-colors ${
+                      explanationLang === "hi"
+                        ? "bg-[#FF9933] text-white"
+                        : "bg-white text-foreground hover:bg-secondary dark:bg-gray-900"
+                    }`}
+                  >
+                    हिन्दी
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className="border-l-4 border-[#002FA7] bg-[#002FA7]/5 dark:bg-[#002FA7]/10 p-6 rounded-r-sm">
+              <p className="text-lg leading-relaxed">
+                {explanationLang === "hi" && func.simple_explanation_hindi
+                  ? func.simple_explanation_hindi
+                  : func.simple_explanation}
+              </p>
+            </div>
+          </section>
+        )}
+
+        {/* ── Video Tutorials ── */}
+        {hasVideos && (
+          <section className="mt-10" data-testid="video-section">
+            <div className="overline klein mb-1">// VIDEO TUTORIALS</div>
+            <h2 className="text-2xl font-black tracking-tighter mb-4">Watch it in Action</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {func.video_url && (
+                <a
+                  href={func.video_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 border border-foreground/15 p-5 hover:border-[#FF0000] hover:bg-red-50 dark:hover:bg-red-950/20 transition-all group"
+                  data-testid="video-english"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#FF0000] rounded-full flex items-center justify-center">
+                    <YoutubeLogo size={24} weight="fill" className="text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm group-hover:text-[#FF0000] transition-colors">
+                      Watch in English
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      LearnSkillsDaily — {func.name} tutorial
+                    </div>
+                  </div>
+                </a>
+              )}
+              {func.video_url_hindi && (
+                <a
+                  href={func.video_url_hindi}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-4 border border-foreground/15 p-5 hover:border-[#FF9933] hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-all group"
+                  data-testid="video-hindi"
+                >
+                  <div className="flex-shrink-0 w-12 h-12 bg-[#FF9933] rounded-full flex items-center justify-center">
+                    <YoutubeLogo size={24} weight="fill" className="text-white" />
+                  </div>
+                  <div>
+                    <div className="font-bold text-sm group-hover:text-[#FF9933] transition-colors">
+                      हिन्दी में देखें
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      YouTube पर {func.name} formula in hindi
+                    </div>
+                  </div>
+                </a>
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* ── Excel Visual Preview ── */}
         {func.visual_example && (
-          <section className="mt-12" data-testid="visual-example-section">
-            <div className="overline klein mb-3">// SEE IT IN ACTION</div>
-            <h2 className="text-2xl lg:text-3xl font-black tracking-tighter mb-2">Mini Excel sheet preview</h2>
-            <p className="text-muted-foreground mb-6 max-w-2xl">
-              Here's a tiny dataset showing how <span className="font-bold klein">{func.name}</span> works in practice.
+          <section className="mt-10" data-testid="visual-example-section">
+            <div className="overline klein mb-1">// SEE IT IN ACTION</div>
+            <h2 className="text-2xl font-black tracking-tighter mb-2">Live Excel Preview</h2>
+            <p className="text-muted-foreground mb-5 max-w-2xl">
+              See exactly how <span className="font-bold klein">{func.name}</span> works in a real Excel spreadsheet.
             </p>
             <VisualExample example={func.visual_example} />
           </section>
