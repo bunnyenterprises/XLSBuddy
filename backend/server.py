@@ -40,6 +40,31 @@ class AuthResponse(BaseModel):
     token: str
     user: dict
 
+class ChatMessageRequest(BaseModel):
+    content: str
+    session_id: Optional[str] = None
+
+class CreateSessionRequest(BaseModel):
+    title: Optional[str] = "New Conversation"
+
+class FormulaRequest(BaseModel):
+    description: str
+
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+
+SYSTEM_PROMPT = """You are XLSBUDDY AI, an expert Excel assistant. You help users with:
+- Excel formulas and functions (syntax, examples, troubleshooting)
+- Common Excel tasks (pivot tables, lookups, conditional formatting, charts)
+- Errors like #N/A, #DIV/0!, #VALUE!, #REF!, #NAME?
+- Best practices and shortcuts
+
+Always:
+- Provide concrete formula examples in code blocks (use markdown ```excel ... ```).
+- Explain the result and edge cases.
+- Suggest a better/modern alternative when relevant (e.g., XLOOKUP over VLOOKUP).
+- Keep answers focused and practical.
+- If a question is not Excel-related, politely redirect to Excel topics."""
+
 
 # ============= AUTH =============
 def public_user(user: dict) -> dict:
@@ -236,6 +261,150 @@ async def delete_tutorial(tutorial_id: str):
         )
 
     return {"success": True}
+
+
+# ============= AI CHAT =============
+@api_router.get("/chat/sessions")
+async def list_sessions(user_id: str = Depends(get_current_user_id)):
+    sessions = await db.chat_sessions.find({"user_id": user_id}, {"_id": 0}).sort("updated_at", -1).to_list(100)
+    return sessions
+
+
+@api_router.post("/chat/sessions")
+async def create_session(req: CreateSessionRequest, user_id: str = Depends(get_current_user_id)):
+    session_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc).isoformat()
+    doc = {"id": session_id, "user_id": user_id, "title": req.title or "New Conversation", "created_at": now, "updated_at": now}
+    await db.chat_sessions.insert_one(doc)
+    return {"id": session_id, "title": doc["title"], "created_at": now, "updated_at": now}
+
+
+@api_router.get("/chat/sessions/{session_id}/messages")
+async def get_messages(session_id: str, user_id: str = Depends(get_current_user_id)):
+    session = await db.chat_sessions.find_one({"id": session_id, "user_id": user_id}, {"_id": 0})
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    msgs = await db.chat_messages.find({"session_id": session_id}, {"_id": 0}).sort("created_at", 1).to_list(1000)
+    return msgs
+
+
+@api_router.delete("/chat/sessions/{session_id}")
+async def delete_session(session_id: str, user_id: str = Depends(get_current_user_id)):
+    session = await db.chat_sessions.find_one({"id": session_id, "user_id": user_id})
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+    await db.chat_sessions.delete_one({"id": session_id, "user_id": user_id})
+    await db.chat_messages.delete_many({"session_id": session_id})
+    return {"ok": True}
+
+
+@api_router.get("/chat/usage")
+async def chat_usage(user_id: str = Depends(get_current_user_id)):
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    settings = await get_settings(db)
+    limit = settings.get("free_daily_chat_limit", 5)
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    count = user.get("daily_chat_count", 0) if user.get("daily_chat_date") == today else 0
+    return {"is_pro": bool(user.get("is_pro")), "limit": None if user.get("is_pro") else limit, "used": count, "remaining": None if user.get("is_pro") else max(0, limit - count)}
+
+
+@api_router.post("/chat/message")
+async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_current_user_id)):
+    import anthropic
+
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured. Add ANTHROPIC_API_KEY to environment variables.")
+
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if not user.get("is_pro") and not user.get("is_admin"):
+        settings = await get_settings(db)
+        limit = settings.get("free_daily_chat_limit", 5)
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        count = user.get("daily_chat_count", 0) if user.get("daily_chat_date") == today else 0
+        if count >= limit:
+            raise HTTPException(status_code=402, detail=f"Free tier limit reached ({limit}/day). Upgrade to Pro for unlimited AI.")
+        await db.users.update_one({"id": user_id}, {"$set": {"daily_chat_date": today, "daily_chat_count": count + 1}})
+
+    session_id = req.session_id
+    if not session_id:
+        session_id = str(uuid.uuid4())
+        now = datetime.now(timezone.utc).isoformat()
+        title = req.content[:60] + ("..." if len(req.content) > 60 else "")
+        await db.chat_sessions.insert_one({"id": session_id, "user_id": user_id, "title": title, "created_at": now, "updated_at": now})
+    else:
+        session = await db.chat_sessions.find_one({"id": session_id, "user_id": user_id})
+        if not session:
+            raise HTTPException(status_code=404, detail="Session not found")
+
+    now = datetime.now(timezone.utc).isoformat()
+    user_msg = {"id": str(uuid.uuid4()), "session_id": session_id, "role": "user", "content": req.content, "created_at": now}
+    await db.chat_messages.insert_one(user_msg.copy())
+
+    # Build conversation history for Claude
+    history = await db.chat_messages.find({"session_id": session_id}, {"_id": 0}).sort("created_at", 1).to_list(40)
+    messages = [{"role": m["role"], "content": m["content"]} for m in history]
+
+    try:
+        ai_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+        response = await ai_client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=1024,
+            system=SYSTEM_PROMPT,
+            messages=messages,
+        )
+        ai_text = response.content[0].text
+    except Exception as e:
+        logging.exception("Claude API error")
+        raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
+
+    ai_msg = {"id": str(uuid.uuid4()), "session_id": session_id, "role": "assistant", "content": ai_text, "created_at": datetime.now(timezone.utc).isoformat()}
+    await db.chat_messages.insert_one(ai_msg.copy())
+    await db.chat_sessions.update_one({"id": session_id}, {"$set": {"updated_at": ai_msg["created_at"]}})
+
+    return {"session_id": session_id, "user_message": {k: v for k, v in user_msg.items()}, "assistant_message": {k: v for k, v in ai_msg.items()}}
+
+
+# ============= FORMULA GENERATOR =============
+@api_router.post("/formula/generate")
+async def generate_formula(req: FormulaRequest, user_id: str = Depends(get_current_user_id)):
+    import anthropic, json, re
+
+    if not ANTHROPIC_API_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured. Add ANTHROPIC_API_KEY to environment variables.")
+
+    if not req.description.strip():
+        raise HTTPException(status_code=400, detail="Description is required")
+
+    prompt = f"""The user wants an Excel formula for this task: "{req.description}"
+
+Respond in this exact JSON format (no extra text):
+{{
+  "formula": "=THE_FORMULA_HERE",
+  "explanation": "One or two sentence plain-English explanation of what it does.",
+  "example": "A short concrete example, e.g. =SUMIF(B2:B10,\\"London\\",C2:C10)"
+}}"""
+
+    try:
+        ai_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
+        response = await ai_client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=512,
+            system="You are an expert Excel formula generator. Always respond with valid JSON only.",
+            messages=[{"role": "user", "content": prompt}],
+        )
+        raw = response.content[0].text
+        match = re.search(r'\{.*\}', raw, re.DOTALL)
+        if not match:
+            raise ValueError("No JSON in response")
+        return json.loads(match.group())
+    except Exception as e:
+        logging.exception("Formula generation error")
+        raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
 
 
 # ============= ROOT =============
