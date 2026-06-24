@@ -14,12 +14,10 @@ import Functions from "@/pages/Functions";
 import FunctionDetail from "@/pages/FunctionDetail";
 import Tutorials from "@/pages/Tutorials";
 import TutorialDetail from "@/pages/TutorialDetail";
-import Chat from "@/pages/Chat";
 import Pricing from "@/pages/Pricing";
 import Reviews from "@/pages/Reviews";
 import Admin from "@/pages/Admin";
 import Bookmarks from "@/pages/Bookmarks";
-import FormulaGenerator from "@/pages/FormulaGenerator";
 
 const HomeGuard = () => {
   const { user, loading } = useAuth();
@@ -44,9 +42,7 @@ function App() {
               <Route path="/functions/:id" element={<ProtectedRoute><FunctionDetail /></ProtectedRoute>} />
               <Route path="/tutorials" element={<Tutorials />} />
               <Route path="/tutorials/:id" element={<TutorialDetail />} />
-              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
               <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
-              <Route path="/formula-generator" element={<ProtectedRoute><FormulaGenerator /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

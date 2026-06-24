@@ -112,16 +112,33 @@ code, pre {
 
   background-size: 40px 40px;
 }
-/* Dark mode */
+/* Dark mode — CSS variables (fixes text/bg on ALL pages) */
 @layer base {
-  .dark body {
-    background-color: #030712;
-    color: #f9fafb;
+  .dark {
+    --background: 222 47% 4%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 6%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 6%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 4%;
+    --secondary: 215 28% 14%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 215 28% 14%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 215 28% 14%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 28% 18%;
+    --input: 215 28% 18%;
+    --ring: 217 91% 60%;
   }
-  .dark .bg-white { background-color: #111827 !important; }
-  .dark .bg-secondary { background-color: #1f2937 !important; }
-  .dark .text-muted-foreground { color: #9ca3af; }
-  .dark .border-foreground\/15 { border-color: rgba(255,255,255,0.1); }
-  .dark .bg-black { background-color: #000 !important; }
-  .dark pre { background-color: #0a0a0a !important; }
 }
+
+/* Overrides for hardcoded Tailwind white/secondary (not CSS-variable-based) */
+.dark .bg-white { background-color: #111827 !important; }
+.dark .border-foreground\/15 { border-color: rgba(255,255,255,0.1); }
+.dark .bg-black { background-color: #000 !important; }
+.dark pre { background-color: #0a0a0a !important; }

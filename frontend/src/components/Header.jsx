@@ -8,8 +8,8 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  GridFour, ChartLine, BookOpen, ChatCircleDots, SignOut, User as UserIcon,
-  List, X, Crown, Star, Tag, Shield, BookmarkSimple, Moon, Sun, Sparkle,
+  GridFour, ChartLine, BookOpen, SignOut, User as UserIcon,
+  List, X, Crown, Star, Tag, Shield, BookmarkSimple, Moon, Sun,
 } from "@phosphor-icons/react";
 
 export const Header = () => {
@@ -23,8 +23,6 @@ export const Header = () => {
     { to: "/dashboard", label: "Dashboard", icon: GridFour },
     { to: "/functions", label: "Functions", icon: ChartLine },
     { to: "/tutorials", label: "Tutorials", icon: BookOpen },
-    { to: "/chat", label: "AI Chat", icon: ChatCircleDots },
-    { to: "/formula-generator", label: "Formula AI", icon: Sparkle },
     { to: "/pricing", label: "Pricing", icon: Tag },
   ];
 

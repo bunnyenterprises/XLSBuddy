@@ -98,7 +98,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-[#030712] flex flex-col">
       <Header />
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-0 lg:px-10 py-0 lg:py-6 grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-6" data-testid="chat-page">
 
@@ -136,7 +136,7 @@ export default function Chat() {
 
         {/* Conversation */}
         <section className="lg:col-span-9 flex flex-col h-[calc(100vh-64px)] lg:h-[calc(100vh-64px-3rem)] border border-foreground/15">
-          <div className="px-6 py-4 border-b border-foreground/15 flex items-center gap-2 bg-white">
+          <div className="px-6 py-4 border-b border-foreground/15 flex items-center gap-2 bg-white dark:bg-[#111827]">
             <ChatCircleDots size={20} className="klein" weight="duotone" />
             <div>
               <div className="font-bold tracking-tight">XLSBuddy AI</div>
@@ -189,7 +189,7 @@ export default function Chat() {
             </div>
           </ScrollArea>
 
-          <div className="border-t border-foreground/15 p-4 bg-white">
+          <div className="border-t border-foreground/15 p-4 bg-white dark:bg-[#111827]">
             <div className="max-w-3xl mx-auto flex gap-2 items-end">
               <Textarea
                 data-testid="chat-input"

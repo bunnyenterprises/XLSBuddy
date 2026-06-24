@@ -23,8 +23,6 @@ client = AsyncIOMotorClient(mongo_url)
 
 db = client[os.environ['DB_NAME']]
 
-EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
-
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
 
@@ -41,13 +39,6 @@ class LoginRequest(BaseModel):
 class AuthResponse(BaseModel):
     token: str
     user: dict
-
-class ChatMessageRequest(BaseModel):
-    content: str
-    session_id: Optional[str] = None
-
-class CreateSessionRequest(BaseModel):
-    title: Optional[str] = "New Conversation"
 
 
 # ============= AUTH =============
@@ -245,200 +236,6 @@ async def delete_tutorial(tutorial_id: str):
         )
 
     return {"success": True}
-# ============= AI CHAT =============
-SYSTEM_PROMPT = """You are XLSBUDDY AI, an expert Excel assistant. You help users with:
-- Excel formulas and functions (syntax, examples, troubleshooting)
-- Common Excel tasks (pivot tables, lookups, conditional formatting, charts)
-- Errors like #N/A, #DIV/0!, #VALUE!, #REF!, #NAME?
-- Best practices and shortcuts
-
-Always:
-- Provide concrete formula examples in code blocks (use markdown ```excel ... ```).
-- Explain the result and edge cases.
-- Suggest a better/modern alternative when relevant (e.g., XLOOKUP over VLOOKUP).
-- Keep answers focused and practical.
-- If a question is not Excel-related, politely redirect to Excel topics."""
-
-
-@api_router.get("/chat/sessions")
-async def list_sessions(user_id: str = Depends(get_current_user_id)):
-    sessions = await db.chat_sessions.find({"user_id": user_id}, {"_id": 0}).sort("updated_at", -1).to_list(100)
-    return sessions
-
-
-@api_router.post("/chat/sessions")
-async def create_session(req: CreateSessionRequest, user_id: str = Depends(get_current_user_id)):
-    session_id = str(uuid.uuid4())
-    now = datetime.now(timezone.utc).isoformat()
-    doc = {
-        "id": session_id,
-        "user_id": user_id,
-        "title": req.title or "New Conversation",
-        "created_at": now,
-        "updated_at": now,
-    }
-    await db.chat_sessions.insert_one(doc)
-    return {"id": session_id, "title": doc["title"], "created_at": now, "updated_at": now}
-
-
-@api_router.get("/chat/sessions/{session_id}/messages")
-async def get_messages(session_id: str, user_id: str = Depends(get_current_user_id)):
-    session = await db.chat_sessions.find_one({"id": session_id, "user_id": user_id}, {"_id": 0})
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
-    msgs = await db.chat_messages.find({"session_id": session_id}, {"_id": 0}).sort("created_at", 1).to_list(1000)
-    return msgs
-
-
-@api_router.delete("/chat/sessions/{session_id}")
-async def delete_session(session_id: str, user_id: str = Depends(get_current_user_id)):
-    session = await db.chat_sessions.find_one({"id": session_id, "user_id": user_id})
-    if not session:
-        raise HTTPException(status_code=404, detail="Session not found")
-    await db.chat_sessions.delete_one({"id": session_id, "user_id": user_id})
-    await db.chat_messages.delete_many({"session_id": session_id})
-    return {"ok": True}
-
-
-@api_router.get("/chat/usage")
-async def chat_usage(user_id: str = Depends(get_current_user_id)):
-    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    settings = await get_settings(db)
-    limit = settings.get("free_daily_chat_limit", 5)
-    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    count = user.get("daily_chat_count", 0) if user.get("daily_chat_date") == today else 0
-    return {
-        "is_pro": bool(user.get("is_pro")),
-        "limit": None if user.get("is_pro") else limit,
-        "used": count,
-        "remaining": None if user.get("is_pro") else max(0, limit - count),
-    }
-
-
-@api_router.post("/chat/message")
-async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_current_user_id)):
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
-
-    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    # Free tier limit (skip for pro and admin)
-    if not user.get("is_pro") and not user.get("is_admin"):
-        settings = await get_settings(db)
-        limit = settings.get("free_daily_chat_limit", 5)
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-        count = user.get("daily_chat_count", 0) if user.get("daily_chat_date") == today else 0
-        if count >= limit:
-            raise HTTPException(
-                status_code=402,
-                detail=f"Free tier limit reached ({limit}/day). Upgrade to Pro for unlimited AI."
-            )
-        await db.users.update_one(
-            {"id": user_id},
-            {"$set": {"daily_chat_date": today, "daily_chat_count": count + 1}}
-        )
-
-    # Get or create session
-    session_id = req.session_id
-    if not session_id:
-        session_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc).isoformat()
-        title = req.content[:60] + ("..." if len(req.content) > 60 else "")
-        await db.chat_sessions.insert_one({
-            "id": session_id,
-            "user_id": user_id,
-            "title": title,
-            "created_at": now,
-            "updated_at": now,
-        })
-    else:
-        session = await db.chat_sessions.find_one({"id": session_id, "user_id": user_id})
-        if not session:
-            raise HTTPException(status_code=404, detail="Session not found")
-
-    now = datetime.now(timezone.utc).isoformat()
-    user_msg = {
-        "id": str(uuid.uuid4()),
-        "session_id": session_id,
-        "role": "user",
-        "content": req.content,
-        "created_at": now,
-    }
-    await db.chat_messages.insert_one(user_msg.copy())
-
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=session_id,
-        system_message=SYSTEM_PROMPT,
-    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-
-    try:
-        ai_text = await chat.send_message(UserMessage(text=req.content))
-    except Exception as e:
-        logging.exception("LLM error")
-        raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
-
-    ai_msg = {
-        "id": str(uuid.uuid4()),
-        "session_id": session_id,
-        "role": "assistant",
-        "content": ai_text,
-        "created_at": datetime.now(timezone.utc).isoformat(),
-    }
-    await db.chat_messages.insert_one(ai_msg.copy())
-
-    await db.chat_sessions.update_one(
-        {"id": session_id},
-        {"$set": {"updated_at": ai_msg["created_at"]}}
-    )
-
-    return {
-        "session_id": session_id,
-        "user_message": {k: v for k, v in user_msg.items()},
-        "assistant_message": {k: v for k, v in ai_msg.items()},
-    }
-
-
-# ============= FORMULA GENERATOR =============
-class FormulaRequest(BaseModel):
-    description: str
-
-@api_router.post("/formula/generate")
-async def generate_formula(req: FormulaRequest, user_id: str = Depends(get_current_user_id)):
-    from emergentintegrations.llm.chat import LlmChat, UserMessage
-
-    if not req.description.strip():
-        raise HTTPException(status_code=400, detail="Description is required")
-
-    prompt = f"""The user wants an Excel formula for this task: "{req.description}"
-
-Respond in this exact JSON format (no extra text):
-{{
-  "formula": "=THE_FORMULA_HERE",
-  "explanation": "One or two sentence plain-English explanation of what it does.",
-  "example": "A short concrete example, e.g. =SUMIF(B2:B10,\"London\",C2:C10)"
-}}"""
-
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=str(uuid.uuid4()),
-        system_message="You are an expert Excel formula generator. Always respond with valid JSON only.",
-    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-
-    try:
-        raw = await chat.send_message(UserMessage(text=prompt))
-        import json, re
-        match = re.search(r'\{.*\}', raw, re.DOTALL)
-        if not match:
-            raise ValueError("No JSON in response")
-        result = json.loads(match.group())
-        return result
-    except Exception as e:
-        logging.exception("Formula generation error")
-        raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
 
 
 # ============= ROOT =============
@@ -475,8 +272,9 @@ async def seed_db():
         {"email": ADMIN_EMAIL},
         {"$set": {"is_admin": True}}
     )
-    # Seed Excel functions — re-seed whenever schema fields are missing
-    needs_reseed = await db.excel_functions.count_documents({}) == 0
+    # Seed Excel functions — re-seed when count changed or schema fields missing
+    db_count = await db.excel_functions.count_documents({})
+    needs_reseed = db_count == 0 or db_count < len(EXCEL_FUNCTIONS)
     if not needs_reseed:
         sample = await db.excel_functions.find_one({}, {"_id": 0})
         if sample and (

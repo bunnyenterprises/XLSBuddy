@@ -2,7 +2,7 @@ services:
   - type: web
     name: xlsbuddy-backend
     runtime: python
-    buildCommand: pip install -r requirements.txt && pip install emergentintegrations --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/
+    buildCommand: pip install -r requirements.txt
     startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: MONGO_URL
@@ -10,8 +10,6 @@ services:
       - key: DB_NAME
         value: XLSBUDDY
       - key: CORS_ORIGINS
-        sync: false
-      - key: EMERGENT_LLM_KEY
         sync: false
       - key: JWT_SECRET
         sync: false

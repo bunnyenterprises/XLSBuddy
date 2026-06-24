@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
-import { ArrowRight, ChartLine, BookOpen, ChatCircleDots, MagnifyingGlass, Lightning, Sparkle, Star, Quotes } from "@phosphor-icons/react";
+import { ArrowRight, ChartLine, BookOpen, Table, MagnifyingGlass, Lightning, Sparkle, Star, Quotes } from "@phosphor-icons/react";
 
 const HERO_IMG = "https://images.unsplash.com/photo-1758784092383-0b5529082731?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwzfHxhYnN0cmFjdCUyMHdoaXRlJTIwZ3JpZCUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3NzgxNjYzNjJ8MA&ixlib=rb-4.1.0&q=85";
 const FEATURE_IMG = "https://images.unsplash.com/photo-1770816306252-b970806ebdf1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMHdoaXRlJTIwZ3JpZCUyMGFyY2hpdGVjdHVyZXxlbnwwfHx8fDE3NzgxNjYzNjJ8MA&ixlib=rb-4.1.0&q=85";
@@ -20,17 +20,35 @@ export default function Landing() {
     : null;
 
   return (
-    <div className="min-h-screen bg-white text-foreground">
+    <div className="min-h-screen bg-white dark:bg-[#030712] text-foreground dark:text-white">
       <Header />
 
       {/* HERO */}
-      <section className="relative overflow-hidden border-b border-foreground/15">
+      <section className="relative overflow-hidden border-b border-foreground/15 bg-white dark:bg-[#030712]">
+        {/* Background image — more vivid */}
         <div
-          className="absolute inset-0 opacity-30"
-          style={{ backgroundImage: `url(${HERO_IMG})`, backgroundSize: "cover", backgroundPosition: "center" }}
+          className="absolute inset-0"
+          style={{ backgroundImage: `url(${HERO_IMG})`, backgroundSize: "cover", backgroundPosition: "center", opacity: 0.5 }}
           aria-hidden
         />
-        <div className="absolute inset-0 bg-white/40" aria-hidden />
+        {/* Light mode: gradient left→right so text stays readable */}
+        <div
+          className="absolute inset-0 dark:hidden"
+          style={{ background: "linear-gradient(105deg, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0.85) 35%, rgba(255,255,255,0.45) 65%, rgba(255,255,255,0.05) 100%)" }}
+          aria-hidden
+        />
+        {/* Dark mode: deep navy gradient left→right */}
+        <div
+          className="absolute inset-0 hidden dark:block"
+          style={{ background: "linear-gradient(105deg, rgba(3,7,18,0.97) 0%, rgba(3,7,18,0.85) 38%, rgba(3,7,18,0.45) 65%, rgba(3,7,18,0.05) 100%)" }}
+          aria-hidden
+        />
+        {/* Subtle blue brand glow bottom-right */}
+        <div
+          className="absolute bottom-0 right-0 w-[50%] h-[70%] pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 80% 80%, rgba(37,99,235,0.18) 0%, transparent 65%)" }}
+          aria-hidden
+        />
         <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10 pt-20 pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-8 slide-in">
@@ -57,8 +75,8 @@ export default function Landing() {
                 </Link>
               </div>
               <div className="mt-12 flex flex-wrap gap-x-10 gap-y-3 overline text-foreground/70">
-                <span>// 60+ FUNCTIONS</span>
-                <span>// AI ASSISTANT</span>
+                <span>// 100+ FUNCTIONS</span>
+                <span>// LIVE EXCEL PREVIEW</span>
                 <span>// 0$ TO START</span>
                 {avg && <span>// ⭐ {avg} RATED</span>}
               </div>
@@ -80,11 +98,11 @@ export default function Landing() {
       </section>
 
       {/* FEATURES — Tetris grid */}
-      <section className="border-b border-foreground/15">
+      <section className="border-b border-foreground/15 dark:border-white/10">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20">
           <div className="overline klein mb-3">// CAPABILITIES</div>
           <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-12 max-w-3xl">
-            Four tools. One workflow. Zero spreadsheet panic.
+            100+ formulas. Four tools. Zero spreadsheet panic.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border-l border-t border-foreground/15">
@@ -106,12 +124,12 @@ export default function Landing() {
             <div className="md:col-span-5 border-r border-b border-foreground/15 p-8 lg:p-12 lift bg-black text-white relative overflow-hidden">
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: `url(${FEATURE_IMG})`, backgroundSize: "cover" }} />
               <div className="relative">
-                <ChatCircleDots size={36} weight="duotone" className="mb-6" style={{ color: "#7AA0FF" }} />
-                <div className="overline mb-2 text-white/70">02 / AI ASSISTANT</div>
-                <h3 className="text-2xl lg:text-3xl font-bold tracking-tight mb-4">Powered by Claude Sonnet 4.5.</h3>
+                <Table size={36} weight="duotone" className="mb-6" style={{ color: "#7AA0FF" }} />
+                <div className="overline mb-2 text-white/70">02 / LIVE EXCEL PREVIEW</div>
+                <h3 className="text-2xl lg:text-3xl font-bold tracking-tight mb-4">See every formula in a real spreadsheet.</h3>
                 <p className="text-white/80 leading-relaxed">
-                  Stuck on a #N/A? Building a complex formula? Ask, get an answer with code,
-                  explanations, and alternatives.
+                  Each function shows a live Excel-style grid with your data, formula bar,
+                  and highlighted result — exactly as it appears in Excel.
                 </p>
               </div>
             </div>
