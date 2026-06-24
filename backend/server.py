@@ -450,6 +450,7 @@ async def seed_db():
             "visual_example" not in sample
             or "video_url" not in sample
             or "simple_explanation" not in sample
+            or not sample.get("simple_explanation_hindi")
         ):
             needs_reseed = True
     if needs_reseed:
