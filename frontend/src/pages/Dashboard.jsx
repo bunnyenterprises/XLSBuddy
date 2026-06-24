@@ -25,7 +25,7 @@ export default function Dashboard() {
           <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
             <div className="text-[300px] font-black">XLS</div>
           </div>
-          <h1 className="text-4xl lg:text-6xl font-black mb-4">
+          <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
             Welcome back, {user?.name?.split(" ")[0] || "there"} 👋
           </h1>
           <p className="text-lg text-blue-100 max-w-2xl">
@@ -61,7 +61,7 @@ export default function Dashboard() {
               >
                 <Icon size={36} weight="duotone" className={isBlack ? "text-[#7AA0FF]" : "klein"} />
                 <div className={`overline mt-6 mb-2 ${isBlack ? "text-white/60" : "text-muted-foreground"}`}>// 0{i + 1}</div>
-                <h3 className="text-2xl font-bold tracking-tight mb-3">{t.title}</h3>
+                <h3 className="section-title mb-3">{t.title}</h3>
                 <p className={`text-sm leading-relaxed ${isBlack ? "text-white/75" : "text-muted-foreground"}`}>{t.desc}</p>
                 <ArrowUpRight size={22} className="absolute top-6 right-6 opacity-60 group-hover:opacity-100 transition-opacity" />
               </Link>
@@ -77,7 +77,7 @@ export default function Dashboard() {
             { k: "24/7", v: "AI SUPPORT" },
           ].map((s) => (
             <div key={s.v} className="rounded-2xl border border-slate-200 dark:border-gray-700 p-6 lg:p-8 bg-white dark:bg-gray-900 shadow-sm">
-              <div className="text-4xl lg:text-5xl font-black tracking-tighter klein">{s.k}</div>
+              <div className="metric-title klein">{s.k}</div>
               <div className="overline mt-2 dark:text-gray-400">{s.v}</div>
             </div>
           ))}

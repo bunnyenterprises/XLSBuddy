@@ -149,7 +149,7 @@ export default function Chat() {
               {messages.length === 0 && !sending && (
                 <div className="py-10">
                   <Sparkle size={36} weight="duotone" className="klein mb-4" />
-                  <h2 className="text-3xl font-black tracking-tighter mb-2">Ask anything Excel.</h2>
+                  <h2 className="text-2xl font-extrabold tracking-tight mb-2">Ask anything Excel.</h2>
                   <p className="text-muted-foreground mb-8">Formulas, errors, pivot tables, charts — your AI sidekick is ready.</p>
                   <div className="overline mb-3">// TRY</div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

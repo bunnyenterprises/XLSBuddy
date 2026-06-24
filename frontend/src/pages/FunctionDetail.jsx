@@ -88,7 +88,7 @@ export default function FunctionDetail() {
                 "border-green-500 text-green-700"
               }`}>{func.difficulty || "Beginner"}</Badge>
             </div>
-            <h1 className="text-5xl lg:text-6xl font-black tracking-tighter mb-4">{func.name}</h1>
+            <h1 className="page-title mb-4">{func.name}</h1>
             <p className="text-lg text-muted-foreground leading-relaxed">{func.description}</p>
           </div>
           <div className="lg:col-span-4 flex flex-col gap-3">
@@ -152,7 +152,7 @@ export default function FunctionDetail() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <div className="overline klein mb-1">// EXPLAIN LIKE I'M 10</div>
-                <h2 className="text-2xl font-black tracking-tighter">Simple Explanation</h2>
+                <h2 className="section-title">Simple Explanation</h2>
               </div>
               {/* Language toggle */}
               {func.simple_explanation && func.simple_explanation_hindi && (
@@ -194,7 +194,7 @@ export default function FunctionDetail() {
         {hasVideos && (
           <section className="mt-10" data-testid="video-section">
             <div className="overline klein mb-1">// VIDEO TUTORIALS</div>
-            <h2 className="text-2xl font-black tracking-tighter mb-4">Watch it in Action</h2>
+            <h2 className="section-title mb-4">Watch it in Action</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {func.video_url && (
                 <a
@@ -246,7 +246,7 @@ export default function FunctionDetail() {
         {func.visual_example && (
           <section className="mt-10" data-testid="visual-example-section">
             <div className="overline klein mb-1">// SEE IT IN ACTION</div>
-            <h2 className="text-2xl font-black tracking-tighter mb-2">Live Excel Preview</h2>
+            <h2 className="section-title mb-2">Live Excel Preview</h2>
             <p className="text-muted-foreground mb-5 max-w-2xl">
               See exactly how <span className="font-bold klein">{func.name}</span> works in a real Excel spreadsheet.
             </p>

@@ -60,7 +60,7 @@ export default function Reviews() {
       <Header />
       <main className="max-w-[1200px] mx-auto px-6 lg:px-10 py-10 lg:py-14" data-testid="reviews-page">
         <div className="overline klein mb-3">// COMMUNITY</div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter mb-3">What people say.</h1>
+        <h1 className="page-title mb-3">What people say.</h1>
         <p className="text-muted-foreground mb-10 max-w-2xl">
           Real reviews from real users. Loving XLSBuddy? Leave us a Google review too.
         </p>
@@ -70,7 +70,7 @@ export default function Reviews() {
           <div className="md:col-span-2 border-r border-b border-foreground/15 p-8 bg-secondary">
             <div className="overline mb-2">// AVERAGE RATING</div>
             <div className="flex items-baseline gap-4">
-              <span className="text-6xl font-black tracking-tighter klein">{avg || "—"}</span>
+              <span className="metric-title klein">{avg || "—"}</span>
               <div className="flex">
                 {[1,2,3,4,5].map((i) => (
                   <Star key={i} size={24} weight={avg && i <= Math.round(avg) ? "fill" : "regular"} className={avg && i <= Math.round(avg) ? "klein" : "text-foreground/20"} />

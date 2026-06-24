@@ -53,7 +53,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             <div className="lg:col-span-8 slide-in">
               <div className="overline klein mb-6">// EXCEL · DECODED</div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter leading-[0.95] mb-8">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold tracking-tight leading-tight mb-8">
                 Every Excel formula.<br/>
                 Every error.<br/>
                 <span className="klein">Solved.</span>
@@ -101,7 +101,7 @@ export default function Landing() {
       <section className="border-b border-foreground/15 dark:border-white/10">
         <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-20">
           <div className="overline klein mb-3">// CAPABILITIES</div>
-          <h2 className="text-3xl sm:text-4xl font-black tracking-tighter mb-12 max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-12 max-w-3xl">
             100+ formulas. Four tools. Zero spreadsheet panic.
           </h2>
 
@@ -165,10 +165,10 @@ export default function Landing() {
             <div className="overline klein mb-3">// COMMUNITY</div>
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
               <div>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tighter">What people say.</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">What people say.</h2>
                 {avg && (
                   <div className="flex items-center gap-3 mt-3">
-                    <span className="text-4xl font-black tracking-tighter klein">{avg}</span>
+                    <span className="metric-title klein">{avg}</span>
                     <div className="flex">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <Star key={i} size={20} weight={i <= Math.round(avg) ? "fill" : "regular"} className={i <= Math.round(avg) ? "klein" : "text-foreground/20"} />
@@ -217,7 +217,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-end">
             <div className="md:col-span-8">
               <div className="overline mb-4 text-white/60">// READY?</div>
-              <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tighter leading-[0.9]">
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
                 Stop googling.<br/>
                 Start <span className="text-[#7AA0FF]">mastering</span>.
               </h2>

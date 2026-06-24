@@ -14,7 +14,7 @@ import { Crown, Users, Star, ChartBar, GearSix, FloppyDisk, Eye, EyeSlash } from
 const StatCard = ({ label, value, accent = "klein" }) => (
   <div className="border-r border-b border-foreground/15 p-6 bg-white">
     <div className="overline mb-2">{label}</div>
-    <div className={`text-4xl font-black tracking-tighter ${accent === "klein" ? "klein" : ""}`}>{value}</div>
+    <div className={`metric-title ${accent === "klein" ? "klein" : ""}`}>{value}</div>
   </div>
 );
 
@@ -257,7 +257,7 @@ setTutorials(t.data);
           <Crown size={28} weight="fill" className="klein" />
           <div className="overline klein">// ADMIN CONSOLE</div>
         </div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter mb-3">Hello, boss.</h1>
+        <h1 className="page-title mb-3">Hello, boss.</h1>
         <p className="text-muted-foreground mb-8">Stats, users, reviews, and payment settings — all yours.</p>
 
         <Tabs value={tab} onValueChange={setTab} className="w-full">

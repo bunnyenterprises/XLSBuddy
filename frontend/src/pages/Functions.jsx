@@ -48,7 +48,7 @@ export default function Functions() {
       <Header />
       <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-14" data-testid="functions-page">
         <div className="overline klein mb-3">// FUNCTIONS LIBRARY</div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter mb-3">All Excel functions.</h1>
+        <h1 className="page-title mb-3">All Excel functions.</h1>
         <p className="text-muted-foreground max-w-2xl mb-8">
           Browse by category, search by name or use case. Click any to see syntax, examples, and tips.
         </p>
@@ -101,7 +101,7 @@ export default function Functions() {
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <FunctionIcon size={18} className="klein" weight="bold" />
-                    <span className="font-black text-xl tracking-tight">{f.name}</span>
+                    <span className="font-extrabold text-lg tracking-tight">{f.name}</span>
                   </div>
                   <Badge variant="outline" className="rounded-none border-foreground/20 text-xs">{f.category}</Badge>
                 </div>

@@ -56,7 +56,7 @@ export default function Bookmarks() {
       <Header />
       <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
         <div className="overline klein mb-3">// SAVED</div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter mb-3">Your bookmarks.</h1>
+        <h1 className="page-title mb-3">Your bookmarks.</h1>
         <p className="text-muted-foreground mb-10 max-w-2xl">Functions and tutorials you've saved for quick access.</p>
 
         {loading ? (
@@ -77,7 +77,7 @@ export default function Bookmarks() {
               <section className="mb-12">
                 <div className="flex items-center gap-2 mb-4">
                   <FunctionIcon size={20} className="klein" weight="bold" />
-                  <h2 className="text-xl font-black tracking-tight">Functions <span className="text-muted-foreground font-normal">({functions.length})</span></h2>
+                  <h2 className="section-title">Functions <span className="text-muted-foreground font-normal">({functions.length})</span></h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-t border-foreground/15">
                   {functions.map((b) => {
@@ -94,7 +94,7 @@ export default function Bookmarks() {
                         </button>
                         <div className="flex items-center gap-2 mb-2">
                           <FunctionIcon size={16} className="klein" weight="bold" />
-                          <span className="font-black text-lg tracking-tight">{item.name}</span>
+                          <span className="font-extrabold text-base tracking-tight">{item.name}</span>
                           <Badge variant="outline" className="rounded-none border-foreground/20 text-xs ml-auto mr-7">{item.category}</Badge>
                         </div>
                         <code className="block text-xs bg-secondary border border-foreground/10 p-2 mb-3 truncate">{item.syntax}</code>
@@ -114,7 +114,7 @@ export default function Bookmarks() {
               <section>
                 <div className="flex items-center gap-2 mb-4">
                   <BookOpen size={20} className="klein" weight="duotone" />
-                  <h2 className="text-xl font-black tracking-tight">Tutorials <span className="text-muted-foreground font-normal">({tutorials.length})</span></h2>
+                  <h2 className="section-title">Tutorials <span className="text-muted-foreground font-normal">({tutorials.length})</span></h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-t border-foreground/15">
                   {tutorials.map((b) => {

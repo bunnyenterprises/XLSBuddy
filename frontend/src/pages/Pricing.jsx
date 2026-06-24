@@ -78,7 +78,7 @@ export default function Pricing() {
       <Header />
       <main className="max-w-[1200px] mx-auto px-6 lg:px-10 py-12 lg:py-16" data-testid="pricing-page">
         <div className="overline klein mb-3">// PRICING</div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter mb-3">Simple. Honest. One plan.</h1>
+        <h1 className="page-title mb-3">Simple. Honest. One plan.</h1>
         <p className="text-muted-foreground max-w-2xl mb-12">
           Start free. Upgrade when you need unlimited AI. Cancel anytime.
         </p>
@@ -88,7 +88,7 @@ export default function Pricing() {
           <div className="border-r border-b border-foreground/15 p-8 lg:p-10 bg-white" data-testid="plan-free">
             <div className="overline mb-4">// FREE</div>
             <div className="flex items-baseline gap-2 mb-6">
-              <span className="text-5xl font-black tracking-tighter">₹0</span>
+              <span className="metric-title">₹0</span>
               <span className="text-muted-foreground">/forever</span>
             </div>
             <ul className="space-y-3 mb-10">
@@ -120,7 +120,7 @@ export default function Pricing() {
             <div className="absolute top-0 right-0 bg-klein text-white text-xs font-bold px-4 py-1 overline">// MOST POPULAR</div>
             <div className="overline mb-4 text-white/60 flex items-center gap-2"><Crown size={14} weight="fill" /> // PRO</div>
             <div className="flex items-baseline gap-2 mb-1">
-              <span className="text-5xl font-black tracking-tighter text-[#7AA0FF]">₹{price}</span>
+              <span className="metric-title text-[#7AA0FF]">₹{price}</span>
               <span className="text-white/60">/month</span>
             </div>
             <p className="text-xs text-white/50 mb-6">Cancel anytime · INR billing · UPI, cards, netbanking</p>

@@ -36,7 +36,7 @@ export default function Signup() {
         <form onSubmit={submit} className="w-full max-w-md space-y-6" data-testid="signup-form">
           <div>
             <div className="overline klein mb-2">// CREATE ACCOUNT</div>
-            <h2 className="text-3xl lg:text-4xl font-black tracking-tighter">Master Excel — free.</h2>
+            <h2 className="text-2xl lg:text-3xl font-extrabold tracking-tight">Master Excel — free.</h2>
           </div>
           <div className="space-y-2">
             <Label htmlFor="name" className="overline">NAME</Label>
@@ -76,7 +76,7 @@ export default function Signup() {
         </Link>
         <div>
           <div className="overline mb-6 text-white/60">// JOIN</div>
-          <h1 className="text-5xl lg:text-6xl font-black tracking-tighter leading-[0.95]">
+          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
             Stop googling.<br/>
             Start<br/>
             <span className="text-[#7AA0FF]">mastering</span>.

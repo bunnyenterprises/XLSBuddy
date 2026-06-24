@@ -49,7 +49,7 @@ export default function FormulaGenerator() {
       <Header />
       <main className="max-w-[860px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
         <div className="overline klein mb-3">// AI FORMULA GENERATOR</div>
-        <h1 className="text-4xl lg:text-5xl font-black tracking-tighter mb-3">
+        <h1 className="page-title mb-3">
           Describe it. Get the formula.
         </h1>
         <p className="text-muted-foreground max-w-xl mb-10">

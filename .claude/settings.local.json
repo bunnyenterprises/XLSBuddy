@@ -6,7 +6,10 @@
       "Bash(git push *)",
       "Bash(git stash *)",
       "Skill(claude-api)",
-      "Skill(claude-api:*)"
+      "Skill(claude-api:*)",
+      "Bash(python -c ' *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: reseed DB when simple_explanation_hindi is missing from formulas *)"
     ]
   }
 }

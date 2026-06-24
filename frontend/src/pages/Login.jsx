@@ -43,7 +43,7 @@ export default function Login() {
         </Link>
         <div>
           <div className="overline mb-6 text-white/70">// WELCOME BACK</div>
-          <h1 className="text-5xl lg:text-6xl font-black tracking-tighter leading-[0.95]">
+          <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
             Pick up<br/>where you<br/>left off.
           </h1>
           <p className="mt-8 text-white/80 max-w-sm leading-relaxed">
@@ -57,7 +57,7 @@ export default function Login() {
         <form onSubmit={submit} className="w-full max-w-md space-y-6" data-testid="login-form">
           <div>
             <div className="overline klein mb-2">// SIGN IN</div>
-            <h2 className="text-3xl lg:text-4xl font-black tracking-tighter">Sign in to your account.</h2>
+            <h2 className="text-2xl lg:text-3xl font-extrabold tracking-tight">Sign in to your account.</h2>
           </div>
           <div className="space-y-2">
             <Label htmlFor="email" className="overline">EMAIL</Label>

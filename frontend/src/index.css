@@ -72,6 +72,27 @@ code, pre {
     font-weight: 500;
 }
 
+.page-title {
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+}
+
+.section-title {
+    font-size: 1.35rem;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    font-weight: 750;
+}
+
+.metric-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+}
+
 .klein { color: #2563eb; }
 .bg-klein { background-color: #2662e4; }
 .border-klein { border-color: #225ddf; }
@@ -83,9 +104,13 @@ code, pre {
 .markdown ul { margin: 0.5rem 0 0.75rem 1.25rem; list-style: disc; }
 .markdown ol { margin: 0.5rem 0 0.75rem 1.25rem; list-style: decimal; }
 .markdown li { margin: 0.25rem 0; }
+.markdown {
+    color: #0f172a;
+}
 .markdown code {
     background: #f4f4f5;
     border: 1px solid #e4e4e7;
+    color: #0f172a;
     padding: 0.1rem 0.35rem;
     font-size: 0.875em;
 }
@@ -107,8 +132,9 @@ code, pre {
   background-color: #f8fafc;
 
   background-image:
-    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    linear-gradient(rgba(22, 101, 52, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 101, 52, 0.08) 1px, transparent 1px),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 34rem);
 
   background-size: 40px 40px;
 }
@@ -142,3 +168,46 @@ code, pre {
 .dark .border-foreground\/15 { border-color: rgba(255,255,255,0.1); }
 .dark .bg-black { background-color: #000 !important; }
 .dark pre { background-color: #0a0a0a !important; }
+.dark .excel-bg {
+  background-color: #0f172a;
+  background-image:
+    linear-gradient(rgba(34, 197, 94, 0.11) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.11) 1px, transparent 1px),
+    radial-gradient(circle at top right, rgba(37, 99, 235, 0.18), transparent 34rem);
+}
+.dark .markdown {
+  color: #f8fafc;
+}
+.dark .markdown h2,
+.dark .markdown h3,
+.dark .markdown strong {
+  color: #ffffff;
+}
+.dark .markdown p,
+.dark .markdown li {
+  color: #dbeafe;
+}
+.dark .markdown code {
+  background: #111827;
+  border-color: rgba(148, 163, 184, 0.35);
+  color: #bfdbfe;
+}
+.dark .markdown pre {
+  background: #020617 !important;
+  color: #f8fafc;
+  border-left-color: #22c55e;
+}
+.dark .markdown th,
+.dark .markdown td {
+  border-color: rgba(148, 163, 184, 0.28);
+}
+.dark .markdown th {
+  background: #111827;
+  color: #f8fafc;
+}
+.dark .markdown td {
+  color: #dbeafe;
+}
+.dark .markdown a {
+  color: #93c5fd;
+}
