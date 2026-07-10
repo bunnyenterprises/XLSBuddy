@@ -53,7 +53,7 @@ export default function Login() {
         <div className="overline text-white/50">// 001 / 002</div>
       </div>
 
-      <div className="flex items-center justify-center p-6 lg:p-12">
+      <div className="flex items-center justify-center p-6 lg:p-12 min-h-screen lg:min-h-0">
         <form onSubmit={submit} className="w-full max-w-md space-y-6" data-testid="login-form">
           <div>
             <div className="overline klein mb-2">// SIGN IN</div>
