@@ -33,7 +33,8 @@ export default function Reviews() {
     }
   };
 
-  useEffect(() => { load(); /* eslint-disable-next-line */ }, [user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { load(); }, [user]);
 
   const submit = async () => {
     if (!user) { toast.error("Please log in to leave a review"); return; }
