@@ -201,7 +201,7 @@ export default function Landing() {
                     </div>
                     <div>
                       <div className="font-bold text-sm">{r.user_name}</div>
-                      <div className="overline text-muted-foreground text-[10px]">{r.updated_at?.slice(0, 10)}</div>
+                      <div className="overline text-muted-foreground">{r.updated_at?.slice(0, 10)}</div>
                     </div>
                   </div>
                 </div>

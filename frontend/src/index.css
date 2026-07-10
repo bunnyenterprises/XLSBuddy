@@ -211,3 +211,54 @@ code, pre {
 .dark .markdown a {
   color: #93c5fd;
 }
+
+/* ── Mobile typography ── */
+@media (max-width: 639px) {
+  /* Tighten overline so it doesn't overflow small screens */
+  .overline {
+    letter-spacing: 0.08em;
+    font-size: 0.7rem;
+  }
+
+  /* Prevent ALL text from overflowing its container */
+  h1, h2, h3, h4, h5, h6, p, span, a, li, td, th, label, div {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* iOS: any input < 16px triggers auto-zoom — force 16px */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="number"],
+  input[type="tel"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
+  /* Code blocks: scroll horizontally, don't break mid-word */
+  pre {
+    overflow-x: auto;
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: pre;
+    font-size: 0.78rem;
+  }
+
+  /* But inline code inside paragraphs can break */
+  p code, li code {
+    word-break: break-all;
+  }
+
+  /* section-title slightly smaller on very small screens */
+  .section-title {
+    font-size: 1.15rem;
+  }
+
+  /* Markdown headings scale down */
+  .markdown h2 { font-size: 1.2rem; }
+  .markdown h3 { font-size: 1rem; }
+  .markdown p, .markdown li { font-size: 0.95rem; }
+}
