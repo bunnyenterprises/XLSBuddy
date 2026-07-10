@@ -70,7 +70,10 @@ export default function Login() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password" className="overline">PASSWORD</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="overline">PASSWORD</Label>
+              <Link to="/forgot-password" className="text-xs klein font-bold hover:underline">Forgot password?</Link>
+            </div>
             <Input
               id="password" type="password" required
               value={password} onChange={(e) => setPassword(e.target.value)}
@@ -86,9 +89,8 @@ export default function Login() {
           >
             {loading ? "Signing in…" : (<>Sign in <ArrowRight size={18} className="ml-2" /></>)}
           </Button>
-          <div className="text-sm text-muted-foreground flex justify-between flex-wrap gap-2">
-            <span>New here? <Link to="/signup" className="klein font-bold underline" data-testid="login-to-signup">Create an account</Link></span>
-            <Link to="/forgot-password" className="klein font-bold underline">Forgot password?</Link>
+          <div className="text-sm text-muted-foreground">
+            New here? <Link to="/signup" className="klein font-bold underline" data-testid="login-to-signup">Create an account</Link>
           </div>
         </form>
       </div>
