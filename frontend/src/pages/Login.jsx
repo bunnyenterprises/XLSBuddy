@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowRight } from "@phosphor-icons/react";
 
@@ -34,6 +33,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+      {/* Left blue panel — desktop only */}
       <div className="bg-klein text-white p-12 lg:p-16 hidden lg:flex flex-col justify-between">
         <Link to="/" className="flex items-center gap-2" data-testid="login-brand">
           <div className="w-7 h-7 bg-white flex items-center justify-center">
@@ -53,35 +53,34 @@ export default function Login() {
         <div className="overline text-white/50">// 001 / 002</div>
       </div>
 
+      {/* Right form panel */}
       <div className="flex items-center justify-center p-6 lg:p-12 min-h-screen lg:min-h-0">
-        <form onSubmit={submit} className="w-full max-w-md space-y-6" data-testid="login-form">
+        <form onSubmit={submit} className="w-full max-w-md space-y-4" data-testid="login-form">
+          <h2 className="text-2xl lg:text-3xl font-extrabold tracking-tight mb-4">Sign in to your account.</h2>
+
+          <Input
+            id="email" type="email" required
+            value={email} onChange={(e) => setEmail(e.target.value)}
+            data-testid="login-email-input"
+            className="rounded-none border-foreground/30 h-12 text-base"
+            placeholder="Email address"
+          />
+
           <div>
-            <div className="overline klein mb-2">// SIGN IN</div>
-            <h2 className="text-2xl lg:text-3xl font-extrabold tracking-tight">Sign in to your account.</h2>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email" className="overline">EMAIL</Label>
-            <Input
-              id="email" type="email" required
-              value={email} onChange={(e) => setEmail(e.target.value)}
-              data-testid="login-email-input"
-              className="rounded-none border-foreground/30 h-12 text-base"
-              placeholder="you@work.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password" className="overline">PASSWORD</Label>
-              <Link to="/forgot-password" className="text-xs klein font-bold hover:underline">Forgot password?</Link>
-            </div>
             <Input
               id="password" type="password" required
               value={password} onChange={(e) => setPassword(e.target.value)}
               data-testid="login-password-input"
               className="rounded-none border-foreground/30 h-12 text-base"
-              placeholder="••••••••"
+              placeholder="Password"
             />
+            <div className="text-right mt-2">
+              <Link to="/forgot-password" className="text-sm klein font-semibold hover:underline">
+                Forgot password?
+              </Link>
+            </div>
           </div>
+
           <Button
             type="submit" disabled={loading}
             data-testid="login-submit-button"
@@ -89,8 +88,12 @@ export default function Login() {
           >
             {loading ? "Signing in…" : (<>Sign in <ArrowRight size={18} className="ml-2" /></>)}
           </Button>
+
           <div className="text-sm text-muted-foreground">
-            New here? <Link to="/signup" className="klein font-bold underline" data-testid="login-to-signup">Create an account</Link>
+            New here?{" "}
+            <Link to="/signup" className="klein font-bold underline" data-testid="login-to-signup">
+              Create an account
+            </Link>
           </div>
         </form>
       </div>
