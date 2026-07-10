@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
 from typing import List, Optional
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(str(ROOT_DIR / '.env'))
@@ -50,7 +50,16 @@ class CreateSessionRequest(BaseModel):
 class FormulaRequest(BaseModel):
     description: str
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
 GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://www.xlsbuddy.com')
 
 SYSTEM_PROMPT = """You are XLSBUDDY AI, an expert Excel assistant. You help users with:
 - Excel formulas and functions (syntax, examples, troubleshooting)
@@ -110,6 +119,65 @@ async def login(req: LoginRequest):
         user["is_admin"] = True
     token = create_token(user["id"])
     return AuthResponse(token=token, user=public_user(user))
+
+
+@api_router.post("/auth/forgot-password")
+async def forgot_password(req: ForgotPasswordRequest):
+    import secrets, resend
+    user = await db.users.find_one({"email": req.email.lower()})
+    if user:
+        token = secrets.token_urlsafe(32)
+        expires_at = (datetime.now(timezone.utc) + timedelta(hours=1)).isoformat()
+        await db.password_resets.insert_one({
+            "token": token,
+            "user_id": user["id"],
+            "email": user["email"],
+            "expires_at": expires_at,
+            "used": False,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        })
+        reset_url = f"{FRONTEND_URL}/reset-password?token={token}"
+        try:
+            resend.api_key = RESEND_API_KEY
+            resend.Emails.send({
+                "from": "XLSBuddy <noreply@xlsbuddy.com>",
+                "to": [user["email"]],
+                "subject": "Reset your XLSBuddy password",
+                "html": f"""
+                <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:32px 24px;">
+                  <div style="background:#002FA7;padding:16px 24px;margin-bottom:32px;">
+                    <span style="color:white;font-weight:900;font-size:18px;letter-spacing:1px;">XLSBUDDY</span>
+                  </div>
+                  <h2 style="color:#0f172a;margin:0 0 16px;">Reset your password</h2>
+                  <p style="color:#475569;line-height:1.6;">Hi {user['name']},</p>
+                  <p style="color:#475569;line-height:1.6;">Click the button below to set a new password. This link expires in <strong>1 hour</strong>.</p>
+                  <a href="{reset_url}" style="display:inline-block;margin:24px 0;background:#002FA7;color:white;padding:14px 28px;font-weight:bold;text-decoration:none;font-size:15px;">
+                    Reset Password
+                  </a>
+                  <p style="color:#94a3b8;font-size:13px;margin-top:32px;">If you didn't request this, you can safely ignore this email.</p>
+                </div>
+                """,
+            })
+        except Exception:
+            logging.exception("Password reset email failed")
+    # Always return success — prevents email enumeration
+    return {"message": "If that email is registered, a reset link has been sent."}
+
+
+@api_router.post("/auth/reset-password")
+async def reset_password(req: ResetPasswordRequest):
+    if len(req.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Password must be at least 6 characters")
+    record = await db.password_resets.find_one({"token": req.token, "used": False})
+    if not record:
+        raise HTTPException(status_code=400, detail="Invalid or already used reset link")
+    expires_at = datetime.fromisoformat(record["expires_at"])
+    if datetime.now(timezone.utc) > expires_at:
+        raise HTTPException(status_code=400, detail="Reset link has expired. Please request a new one.")
+    new_hash = hash_password(req.new_password)
+    await db.users.update_one({"id": record["user_id"]}, {"$set": {"password_hash": new_hash}})
+    await db.password_resets.update_one({"token": req.token}, {"$set": {"used": True}})
+    return {"message": "Password reset successfully. You can now log in."}
 
 
 @api_router.get("/auth/me")

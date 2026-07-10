@@ -20,6 +20,8 @@ import Pricing from "@/pages/Pricing";
 import Reviews from "@/pages/Reviews";
 import Admin from "@/pages/Admin";
 import Bookmarks from "@/pages/Bookmarks";
+import ForgotPassword from "@/pages/ForgotPassword";
+import ResetPassword from "@/pages/ResetPassword";
 
 const HomeGuard = () => {
   const { user, loading } = useAuth();
@@ -37,6 +39,8 @@ function App() {
               <Route path="/" element={<HomeGuard />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/reviews" element={<Reviews />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />

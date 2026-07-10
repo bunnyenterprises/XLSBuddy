@@ -94,8 +94,38 @@ code, pre {
 }
 
 .klein { color: #2563eb; }
-.bg-klein { background-color: #2662e4; }
+.bg-klein { background: linear-gradient(135deg, #2563eb 0%, #1a3fcf 100%); }
 .border-klein { border-color: #225ddf; }
+
+/* Modern page background — subtle gradient mesh */
+.page-bg {
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(37,99,235,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(99,102,241,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(59,130,246,0.03) 0%, transparent 70%),
+    #f8faff;
+}
+.dark .page-bg {
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(37,99,235,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 100%, rgba(99,102,241,0.10) 0%, transparent 50%),
+    #030712;
+}
+
+/* Attractive lift card */
+.lift {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+  border-color: rgba(37,99,235,0.3) !important;
+}
+
+/* Glowing search bar */
+.search-glow:focus-within {
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
 
 /* Markdown content */
 .markdown h2 { font-size: 1.5rem; font-weight: 800; margin: 1.5rem 0 0.75rem; letter-spacing: -0.02em; }
