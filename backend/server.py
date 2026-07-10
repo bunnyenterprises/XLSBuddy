@@ -354,7 +354,7 @@ async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_curre
 
     try:
         genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=SYSTEM_PROMPT)
+        model = genai.GenerativeModel(model_name="gemini-2.0-flash", system_instruction=SYSTEM_PROMPT)
         response = await model.generate_content_async(contents)
         ai_text = response.text
     except Exception as e:
@@ -391,7 +391,7 @@ Respond in this exact JSON format (no extra text):
     try:
         genai.configure(api_key=GOOGLE_API_KEY)
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-2.0-flash",
             system_instruction="You are an expert Excel formula generator. Always respond with valid JSON only.",
         )
         response = await model.generate_content_async(prompt)
