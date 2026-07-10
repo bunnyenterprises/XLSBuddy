@@ -140,7 +140,7 @@ export default function Chat() {
             <ChatCircleDots size={20} className="klein" weight="duotone" />
             <div>
               <div className="font-bold tracking-tight">XLSBuddy AI</div>
-              <div className="text-xs text-muted-foreground">Powered by Claude Sonnet 4.5</div>
+              <div className="text-xs text-muted-foreground">Powered by Google Gemini</div>
             </div>
           </div>
 
