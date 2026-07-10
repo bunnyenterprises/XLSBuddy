@@ -50,7 +50,7 @@ class CreateSessionRequest(BaseModel):
 class FormulaRequest(BaseModel):
     description: str
 
-ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+GOOGLE_API_KEY = os.environ.get('GOOGLE_API_KEY')
 
 SYSTEM_PROMPT = """You are XLSBUDDY AI, an expert Excel assistant. You help users with:
 - Excel formulas and functions (syntax, examples, troubleshooting)
@@ -312,10 +312,10 @@ async def chat_usage(user_id: str = Depends(get_current_user_id)):
 
 @api_router.post("/chat/message")
 async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_current_user_id)):
-    import anthropic
+    import google.generativeai as genai
 
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(status_code=503, detail="AI service not configured. Add ANTHROPIC_API_KEY to environment variables.")
+    if not GOOGLE_API_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured. Add GOOGLE_API_KEY to environment variables.")
 
     user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0})
     if not user:
@@ -345,21 +345,20 @@ async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_curre
     user_msg = {"id": str(uuid.uuid4()), "session_id": session_id, "role": "user", "content": req.content, "created_at": now}
     await db.chat_messages.insert_one(user_msg.copy())
 
-    # Build conversation history for Claude
+    # Build conversation history for Gemini
     history = await db.chat_messages.find({"session_id": session_id}, {"_id": 0}).sort("created_at", 1).to_list(40)
-    messages = [{"role": m["role"], "content": m["content"]} for m in history]
+    contents = [
+        {"role": "model" if m["role"] == "assistant" else "user", "parts": [m["content"]]}
+        for m in history
+    ]
 
     try:
-        ai_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-        response = await ai_client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=1024,
-            system=SYSTEM_PROMPT,
-            messages=messages,
-        )
-        ai_text = response.content[0].text
+        genai.configure(api_key=GOOGLE_API_KEY)
+        model = genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=SYSTEM_PROMPT)
+        response = await model.generate_content_async(contents)
+        ai_text = response.text
     except Exception as e:
-        logging.exception("Claude API error")
+        logging.exception("Gemini API error")
         raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
 
     ai_msg = {"id": str(uuid.uuid4()), "session_id": session_id, "role": "assistant", "content": ai_text, "created_at": datetime.now(timezone.utc).isoformat()}
@@ -372,10 +371,10 @@ async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_curre
 # ============= FORMULA GENERATOR =============
 @api_router.post("/formula/generate")
 async def generate_formula(req: FormulaRequest, user_id: str = Depends(get_current_user_id)):
-    import anthropic, json, re
+    import google.generativeai as genai, json, re
 
-    if not ANTHROPIC_API_KEY:
-        raise HTTPException(status_code=503, detail="AI service not configured. Add ANTHROPIC_API_KEY to environment variables.")
+    if not GOOGLE_API_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured. Add GOOGLE_API_KEY to environment variables.")
 
     if not req.description.strip():
         raise HTTPException(status_code=400, detail="Description is required")
@@ -390,14 +389,13 @@ Respond in this exact JSON format (no extra text):
 }}"""
 
     try:
-        ai_client = anthropic.AsyncAnthropic(api_key=ANTHROPIC_API_KEY)
-        response = await ai_client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=512,
-            system="You are an expert Excel formula generator. Always respond with valid JSON only.",
-            messages=[{"role": "user", "content": prompt}],
+        genai.configure(api_key=GOOGLE_API_KEY)
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction="You are an expert Excel formula generator. Always respond with valid JSON only.",
         )
-        raw = response.content[0].text
+        response = await model.generate_content_async(prompt)
+        raw = response.text
         match = re.search(r'\{.*\}', raw, re.DOTALL)
         if not match:
             raise ValueError("No JSON in response")
