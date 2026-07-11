@@ -1,31 +1,33 @@
-﻿import React, { useState } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
 import { ArrowRight } from "@phosphor-icons/react";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { login, user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // If already logged in, go to dashboard
+  useEffect(() => {
+    if (!authLoading && user) navigate("/dashboard", { replace: true });
+  }, [user, authLoading, navigate]);
 
   const submit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     try {
       await login(email, password);
-      toast.success("Welcome back!");
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
-      if (!err.response) {
-        toast.error("Cannot reach server. Please start the backend first.");
-      } else {
-        toast.error(err.response?.data?.detail || "Login failed");
-      }
+      const msg = err.response?.data?.detail || "Invalid email or password.";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -80,6 +82,12 @@ export default function Login() {
               </Link>
             </div>
           </div>
+
+          {error && (
+            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded px-3 py-2">
+              {error}
+            </div>
+          )}
 
           <Button
             type="submit" disabled={loading}

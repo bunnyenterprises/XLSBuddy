@@ -146,6 +146,9 @@ async def logout(response: Response):
         key=AUTH_COOKIE_NAME,
         path=AUTH_COOKIE_PATH,
         domain=AUTH_COOKIE_DOMAIN,
+        httponly=True,
+        secure=AUTH_COOKIE_SECURE,
+        samesite=AUTH_COOKIE_SAMESITE,
     )
     return {"message": "Logged out"}
 
