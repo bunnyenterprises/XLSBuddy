@@ -37,7 +37,7 @@ export default function Dashboard() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to="/functions">
-                <Button className="rounded-none bg-white text-klein hover:bg-white/90 h-11 px-6 font-bold">
+                <Button className="rounded-none bg-white text-[#002FA7] hover:bg-white/90 h-11 px-6 font-bold">
                   Browse Functions
                 </Button>
               </Link>
