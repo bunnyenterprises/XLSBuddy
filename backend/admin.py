@@ -260,4 +260,12 @@ def build_admin_router(db: AsyncIOMotorDatabase) -> APIRouter:
         )
         return {"ok": True, "is_pro": True}
 
+    @router.post("/payments/cancel")
+    async def cancel_pro(user_id: str = Depends(get_current_user_id)):
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": {"is_pro": False, "pro_cancelled_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        return {"ok": True, "is_pro": False}
+
     return router

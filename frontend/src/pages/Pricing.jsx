@@ -140,9 +140,24 @@ export default function Pricing() {
               ))}
             </ul>
             {user?.is_pro ? (
-              <Button disabled className="rounded-none w-full h-12 bg-white text-black" data-testid="pro-current">
-                <Crown size={16} weight="fill" className="mr-2" /> You're on Pro
-              </Button>
+              <div className="space-y-2">
+                <Button disabled className="rounded-none w-full h-12 bg-white text-black" data-testid="pro-current">
+                  <Crown size={16} weight="fill" className="mr-2" /> You're on Pro
+                </Button>
+                <button
+                  onClick={async () => {
+                    if (!window.confirm("Cancel Pro and go back to Free?")) return;
+                    try {
+                      await api.post("/payments/cancel");
+                      toast.success("Pro cancelled. Reloading…");
+                      setTimeout(() => window.location.reload(), 1200);
+                    } catch { toast.error("Could not cancel"); }
+                  }}
+                  className="w-full text-xs text-white/40 hover:text-white/70 underline py-1 transition-colors"
+                >
+                  Cancel subscription
+                </button>
+              </div>
             ) : (
               <Button
                 onClick={handleUpgrade}
