@@ -65,11 +65,8 @@ async def require_admin(db: AsyncIOMotorDatabase, user_id: str) -> dict:
     user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    if not user.get("is_admin") and user.get("email", "").lower() != ADMIN_EMAIL:
+    if not user.get("is_admin"):
         raise HTTPException(status_code=403, detail="Admin access required")
-    if not user.get("is_admin") and user.get("email", "").lower() == ADMIN_EMAIL:
-        await db.users.update_one({"id": user_id}, {"$set": {"is_admin": True}})
-        user["is_admin"] = True
     return user
 
 

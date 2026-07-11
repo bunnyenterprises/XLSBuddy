@@ -19,31 +19,35 @@ function getYouTubeEmbedId(url) {
   return m ? m[1] : null;
 }
 
+function escapeHtml(str) {
+  return str.replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
+
 function renderMarkdown(md) {
   if (!md) return "";
-  let html = md;
+  let html = escapeHtml(md);
   html = html.replace(/```([a-z]*)\n([\s\S]*?)```/g, (_, lang, code) =>
-    `<pre><code class="lang-${lang}">${code.replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</code></pre>`);
-  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
-  html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
-  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+    `<pre><code class="lang-${escapeHtml(lang)}">${escapeHtml(code)}</code></pre>`);
+  html = html.replace(/^### (.*)$/gm, (_, inner) => `<h3>${escapeHtml(inner)}</h3>`);
+  html = html.replace(/^## (.*)$/gm, (_, inner) => `<h2>${escapeHtml(inner)}</h2>`);
+  html = html.replace(/\*\*([^*]+)\*\*/g, (_, inner) => `<strong>${escapeHtml(inner)}</strong>`);
+  html = html.replace(/`([^`]+)`/g, (_, inner) => `<code>${escapeHtml(inner)}</code>`);
   html = html.replace(/((?:^\|.*\|\s*\n)+)/gm, (block) => {
     const rows = block.trim().split("\n");
-    if (rows.length < 2) return block;
-    const headerCells = rows[0].split("|").slice(1, -1).map(c => `<th>${c.trim()}</th>`).join("");
+    if (rows.length < 2) return escapeHtml(block);
+    const headerCells = rows[0].split("|").slice(1, -1).map(c => `<th>${escapeHtml(c.trim())}</th>`).join("");
     const bodyRows = rows.slice(2).map(r => {
-      const cells = r.split("|").slice(1, -1).map(c => `<td>${c.trim()}</td>`).join("");
+      const cells = r.split("|").slice(1, -1).map(c => `<td>${escapeHtml(c.trim())}</td>`).join("");
       return `<tr>${cells}</tr>`;
     }).join("");
     return `<table><thead><tr>${headerCells}</tr></thead><tbody>${bodyRows}</tbody></table>`;
   });
   html = html.replace(/(?:^- .*(?:\n|$))+/gm, (block) => {
-    const items = block.trim().split("\n").map(l => `<li>${l.replace(/^- /, "")}</li>`).join("");
+    const items = block.trim().split("\n").map(l => `<li>${escapeHtml(l.replace(/^- /, "").trim())}</li>`).join("");
     return `<ul>${items}</ul>`;
   });
   html = html.replace(/(?:^\d+\. .*(?:\n|$))+/gm, (block) => {
-    const items = block.trim().split("\n").map(l => `<li>${l.replace(/^\d+\. /, "")}</li>`).join("");
+    const items = block.trim().split("\n").map(l => `<li>${escapeHtml(l.replace(/^\d+\. /, "").trim())}</li>`).join("");
     return `<ol>${items}</ol>`;
   });
   html = html.split(/\n{2,}/).map(chunk =>

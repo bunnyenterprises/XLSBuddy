@@ -7,20 +7,24 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { PaperPlaneRight, Plus, Trash, ChatCircleDots, Sparkle } from "@phosphor-icons/react";
 
+function escapeHtml(str) {
+  return str.replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
+
 function renderInlineMarkdown(text) {
   if (!text) return "";
-  let html = text.replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]));
-  html = html.replace(/```([a-z]*)\n([\s\S]*?)```/g, (_, l, code) => `<pre><code>${code}</code></pre>`);
-  html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
-  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
-  html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+  let html = escapeHtml(text);
+  html = html.replace(/```([a-z]*)\n([\s\S]*?)```/g, (_, l, code) => `<pre><code>${escapeHtml(code)}</code></pre>`);
+  html = html.replace(/`([^`]+)`/g, (_, inner) => `<code>${escapeHtml(inner)}</code>`);
+  html = html.replace(/\*\*([^*]+)\*\*/g, (_, inner) => `<strong>${escapeHtml(inner)}</strong>`);
+  html = html.replace(/^### (.*)$/gm, (_, inner) => `<h3>${escapeHtml(inner)}</h3>`);
+  html = html.replace(/^## (.*)$/gm, (_, inner) => `<h2>${escapeHtml(inner)}</h2>`);
   html = html.replace(/(?:^- .*(?:\n|$))+/gm, (block) => {
-    const items = block.trim().split("\n").map(l => `<li>${l.replace(/^- /, "")}</li>`).join("");
+    const items = block.trim().split("\n").map(l => `<li>${escapeHtml(l.replace(/^- /, "").trim())}</li>`).join("");
     return `<ul>${items}</ul>`;
   });
   html = html.replace(/(?:^\d+\. .*(?:\n|$))+/gm, (block) => {
-    const items = block.trim().split("\n").map(l => `<li>${l.replace(/^\d+\. /, "")}</li>`).join("");
+    const items = block.trim().split("\n").map(l => `<li>${escapeHtml(l.replace(/^\d+\. /, "").trim())}</li>`).join("");
     return `<ol>${items}</ol>`;
   });
   html = html.split(/\n{2,}/).map(c =>

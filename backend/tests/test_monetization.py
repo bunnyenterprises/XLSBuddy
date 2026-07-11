@@ -9,8 +9,8 @@ import requests
 BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://excel-helper-20.preview.emergentagent.com").rstrip("/")
 API = f"{BASE_URL}/api"
 
-ADMIN_EMAIL = "rajel.chavan6@gmail.com"
-ADMIN_PASSWORD = "admin123"
+ADMIN_EMAIL = os.environ.get("ADMIN_EMAIL")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
 USER_EMAIL = "test@example.com"
 USER_PASSWORD = "test123"
 
@@ -26,6 +26,8 @@ def _login_or_signup(email: str, password: str, name: str = "User"):
 
 @pytest.fixture(scope="module")
 def admin_data():
+    if not ADMIN_EMAIL or not ADMIN_PASSWORD:
+        pytest.skip("Admin credentials not configured. Set ADMIN_EMAIL and ADMIN_PASSWORD in the environment.")
     return _login_or_signup(ADMIN_EMAIL, ADMIN_PASSWORD, "Rajel Admin")
 
 

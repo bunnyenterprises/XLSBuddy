@@ -63,8 +63,8 @@ GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://www.xlsbuddy.com')
 AUTH_COOKIE_NAME = os.environ.get('AUTH_COOKIE_NAME', 'xlsbuddy_session')
-AUTH_COOKIE_SECURE = os.environ.get('AUTH_COOKIE_SECURE', 'false').lower() == 'true'
-AUTH_COOKIE_SAMESITE = os.environ.get('AUTH_COOKIE_SAMESITE', 'Lax')
+AUTH_COOKIE_SECURE = os.environ.get('AUTH_COOKIE_SECURE', 'true').lower() == 'true'
+AUTH_COOKIE_SAMESITE = os.environ.get('AUTH_COOKIE_SAMESITE', 'none')
 AUTH_COOKIE_DOMAIN = os.environ.get('AUTH_COOKIE_DOMAIN') or None
 AUTH_COOKIE_PATH = os.environ.get('AUTH_COOKIE_PATH', '/')
 AUTH_COOKIE_MAX_AGE = int(os.environ.get('AUTH_COOKIE_MAX_AGE', str(60 * 60 * 24 * 30)))
@@ -529,8 +529,9 @@ for route in api_router.routes:
     print(route.path)
 app.include_router(api_router)
 
-cors_origins = [o.strip() for o in os.environ.get('CORS_ORIGINS', '').split(',') if o.strip()]
-cors_allow_credentials = os.environ.get('CORS_ALLOW_CREDENTIALS', 'false').lower() == 'true'
+cors_origins_raw = os.environ.get('CORS_ORIGINS', 'https://xlsbuddy.vercel.app,http://localhost:3000')
+cors_origins = [o.strip() for o in cors_origins_raw.split(',') if o.strip()]
+cors_allow_credentials = os.environ.get('CORS_ALLOW_CREDENTIALS', 'true').lower() == 'true'
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
