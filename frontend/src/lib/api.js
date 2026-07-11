@@ -7,6 +7,7 @@ export const API = `${BACKEND_URL}/api`;
 export const api = axios.create({
   baseURL: API,
   withCredentials: true,
+  headers: { "X-Requested-With": "XLSBuddy" },
 });
 
 api.interceptors.response.use(

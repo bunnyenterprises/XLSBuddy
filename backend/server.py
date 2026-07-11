@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, Response, Request
+from starlette.middleware.base import BaseHTTPMiddleware
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -535,6 +536,19 @@ app.include_router(api_router)
 cors_origins_raw = os.environ.get('CORS_ORIGINS', 'https://xlsbuddy.vercel.app,http://localhost:3000')
 cors_origins = [o.strip() for o in cors_origins_raw.split(',') if o.strip()]
 cors_allow_credentials = os.environ.get('CORS_ALLOW_CREDENTIALS', 'true').lower() == 'true'
+
+class CSRFMiddleware(BaseHTTPMiddleware):
+    """Block cross-site requests by requiring a custom header on all state-changing calls."""
+    SAFE_METHODS = {"GET", "HEAD", "OPTIONS"}
+
+    async def dispatch(self, request: Request, call_next):
+        if request.method not in self.SAFE_METHODS:
+            token = request.headers.get("X-Requested-With", "")
+            if token != "XLSBuddy":
+                return Response("CSRF check failed", status_code=403)
+        return await call_next(request)
+
+app.add_middleware(CSRFMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
