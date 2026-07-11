@@ -58,11 +58,13 @@ async def get_settings(db: AsyncIOMotorDatabase) -> dict:
         s = DEFAULT_SETTINGS.copy()
     for k, v in DEFAULT_SETTINGS.items():
         s.setdefault(k, v)
-    # Fall back to env vars if not configured in DB
-    if not s.get("razorpay_key_id"):
-        s["razorpay_key_id"] = os.environ.get("RAZORPAY_KEY_ID", "")
-    if not s.get("razorpay_key_secret"):
-        s["razorpay_key_secret"] = os.environ.get("RAZORPAY_KEY_SECRET", "")
+    # Env vars always win over empty DB values
+    env_key_id = os.environ.get("RAZORPAY_KEY_ID", "")
+    env_key_secret = os.environ.get("RAZORPAY_KEY_SECRET", "")
+    if env_key_id:
+        s["razorpay_key_id"] = env_key_id
+    if env_key_secret:
+        s["razorpay_key_secret"] = env_key_secret
     return s
 
 

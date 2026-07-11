@@ -153,9 +153,9 @@ export default function Pricing() {
                 {loading ? "Opening checkout…" : (<><Sparkle size={16} weight="fill" className="mr-2" /> Upgrade to Pro</>)}
               </Button>
             )}
-            {!config?.razorpay_configured && (
+            {!config?.razorpay_configured && !user?.is_pro && (
               <p className="text-xs text-white/50 mt-3 text-center">
-                Admin hasn't configured payments yet.
+                Payments coming soon. Contact support to upgrade.
               </p>
             )}
           </div>
