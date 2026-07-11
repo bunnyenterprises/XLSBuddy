@@ -22,32 +22,38 @@ export default function Dashboard() {
       <Header />
       <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
 
-        {/* Hero — sharp, klein, consistent with rest of app */}
-        <div className="bg-klein text-white p-8 lg:p-12 mb-10 relative overflow-hidden">
-          <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pr-8 pointer-events-none opacity-[0.06]">
+        {/* Hero card — rounded, indigo gradient */}
+        <div className="rounded-2xl text-white p-8 lg:p-12 mb-8 relative overflow-hidden shadow-xl"
+          style={{ background: "linear-gradient(135deg, #1a3fad 0%, #002FA7 50%, #1e1b8f 100%)" }}>
+          {/* Decorative dots */}
+          {[[85,20],[92,60],[8,75]].map(([x,y],i)=>(
+            <div key={i} className="absolute rounded-full pointer-events-none opacity-10"
+              style={{ left:`${x}%`, top:`${y}%`, width:i===0?120:i===1?80:60, height:i===0?120:i===1?80:60, background:"white" }}/>
+          ))}
+          <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pr-8 pointer-events-none opacity-[0.05]">
             <div className="text-[180px] font-black leading-none select-none">XLS</div>
           </div>
           <div className="relative">
-            <div className="overline mb-4 text-white/70">XLSBUDDY DASHBOARD</div>
+            <p className="text-xs font-bold tracking-widest text-white/60 uppercase mb-3">XLSBUDDY DASHBOARD</p>
             <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
               Welcome back, {user?.name?.split(" ")[0] || "there"}.
             </h1>
-            <p className="text-lg text-blue-100 max-w-2xl mb-6">
+            <p className="text-lg text-blue-100/80 max-w-2xl mb-6">
               Search Excel formulas, learn tutorials, and get AI-powered help in seconds.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to="/functions">
-                <Button className="rounded-none bg-white text-[#002FA7] hover:bg-white/90 h-11 px-6 font-bold">
+                <Button className="rounded-full bg-white text-[#002FA7] hover:bg-white/90 h-11 px-6 font-bold shadow-lg">
                   Browse Functions
                 </Button>
               </Link>
               <Link to="/chat">
-                <Button variant="outline" className="rounded-none border-white/40 text-white hover:bg-white/10 h-11 px-6">
+                <Button variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 h-11 px-6">
                   Ask AI
                 </Button>
               </Link>
               <Link to="/tutorials">
-                <Button variant="outline" className="rounded-none border-white/40 text-white hover:bg-white/10 h-11 px-6">
+                <Button variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 h-11 px-6">
                   Tutorials
                 </Button>
               </Link>
@@ -55,25 +61,25 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-l border-t border-foreground/15 mb-10">
+        {/* Stats row — rounded cards with shadows */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { k: "60+", v: "FUNCTIONS" },
-            { k: "12+", v: "TUTORIALS" },
-            { k: "AI", v: "ASSISTANT" },
-            { k: "24/7", v: "SUPPORT" },
+            { k: "60+", v: "FUNCTIONS", color: "text-indigo-600" },
+            { k: "12+", v: "TUTORIALS", color: "text-emerald-600" },
+            { k: "AI", v: "ASSISTANT", color: "text-violet-600" },
+            { k: "24/7", v: "SUPPORT", color: "text-blue-600" },
           ].map((s) => (
-            <div key={s.v} className="border-r border-b border-foreground/15 p-6 lg:p-8 bg-white dark:bg-[#111827]">
-              <div className="metric-title klein">{s.k}</div>
-              <div className="overline mt-2 text-muted-foreground">{s.v}</div>
+            <div key={s.v} className="rounded-2xl p-6 lg:p-8 bg-white dark:bg-[#111827] shadow-sm border border-white/60 dark:border-white/5">
+              <div className={`text-4xl font-black tracking-tight ${s.color}`}>{s.k}</div>
+              <div className="text-[11px] font-bold tracking-widest text-muted-foreground mt-2 uppercase">{s.v}</div>
             </div>
           ))}
         </div>
 
-        {/* Tools grid */}
-        <div className="overline klein mb-3">TOOLS</div>
-        <h2 className="text-2xl font-extrabold tracking-tight mb-8">Everything you need.</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-t border-foreground/15">
+        {/* Tools grid — rounded cards */}
+        <p className="text-xs font-bold tracking-widest text-indigo-500 uppercase mb-2">TOOLS</p>
+        <h2 className="text-2xl font-extrabold tracking-tight mb-6">Everything you need.</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tiles.map((t, i) => {
             const Icon = t.icon;
             return (
@@ -81,13 +87,13 @@ export default function Dashboard() {
                 to={t.to}
                 key={t.to}
                 data-testid={`tile-${t.title.toLowerCase().replace(/[^a-z]/g, "-")}`}
-                className="group border-r border-b border-foreground/15 p-8 lg:p-10 lift bg-white dark:bg-[#111827] hover:bg-secondary dark:hover:bg-[#1a2235] transition-colors"
+                className="group rounded-2xl p-7 lg:p-8 bg-white dark:bg-[#111827] shadow-sm border border-white/60 dark:border-white/5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
               >
-                <Icon size={32} weight="duotone" className="klein mb-4" />
-                <div className="overline mb-2 text-muted-foreground">0{i + 1}</div>
+                <Icon size={32} weight="duotone" className="text-indigo-600 mb-4" />
+                <div className="text-[10px] font-bold tracking-widest text-muted-foreground mb-2">0{i + 1}</div>
                 <h3 className="font-bold text-lg tracking-tight mb-2">{t.title}</h3>
                 <p className="text-sm leading-relaxed text-muted-foreground">{t.desc}</p>
-                <ArrowUpRight size={20} className="mt-4 opacity-40 group-hover:opacity-100 group-hover:text-klein transition-all" />
+                <ArrowUpRight size={20} className="mt-4 opacity-30 group-hover:opacity-100 group-hover:text-indigo-600 transition-all" />
               </Link>
             );
           })}
