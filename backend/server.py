@@ -140,7 +140,7 @@ async def forgot_password(req: ForgotPasswordRequest):
         try:
             resend.api_key = RESEND_API_KEY
             resend.Emails.send({
-                "from": "XLSBuddy <noreply@xlsbuddy.com>",
+                "from": "XLSBuddy <onboarding@resend.dev>",
                 "to": [user["email"]],
                 "subject": "Reset your XLSBuddy password",
                 "html": f"""
