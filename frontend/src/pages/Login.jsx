@@ -54,7 +54,7 @@ export default function Login() {
       </div>
 
       {/* Right form panel */}
-      <div className="flex items-center justify-center p-6 lg:p-12 min-h-screen lg:min-h-0">
+      <div className="hero-bg flex items-center justify-center p-6 lg:p-12 min-h-screen lg:min-h-0">
         <form onSubmit={submit} className="w-full max-w-md space-y-4" data-testid="login-form">
           <h2 className="text-2xl lg:text-3xl font-extrabold tracking-tight mb-4">Sign in to your account.</h2>
 

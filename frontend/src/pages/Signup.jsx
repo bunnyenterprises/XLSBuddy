@@ -32,7 +32,7 @@ export default function Signup() {
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
-      <div className="flex items-center justify-center p-6 lg:p-12 order-2 lg:order-1">
+      <div className="hero-bg flex items-center justify-center p-6 lg:p-12 order-2 lg:order-1">
         <form onSubmit={submit} className="w-full max-w-md space-y-6" data-testid="signup-form">
           <div>
             <div className="overline klein mb-2">CREATE ACCOUNT</div>
