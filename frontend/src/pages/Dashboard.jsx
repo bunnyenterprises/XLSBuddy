@@ -99,6 +99,38 @@ export default function Dashboard() {
           })}
         </div>
 
+        {/* Promo banner */}
+        <div className="mt-8 rounded-2xl overflow-hidden shadow-sm relative" style={{ background: "linear-gradient(135deg, #1D6F42 0%, #0f4a2c 100%)" }}>
+          <div className="absolute right-0 top-0 bottom-0 flex items-center pr-8 pointer-events-none opacity-[0.07]">
+            <div className="text-[140px] font-black leading-none select-none text-white">XLS</div>
+          </div>
+          <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-8 lg:p-10">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[10px] font-bold tracking-widest text-emerald-300 uppercase">Pro Tip</span>
+              </div>
+              <h3 className="text-xl lg:text-2xl font-extrabold text-white tracking-tight mb-1">
+                Unlock unlimited AI chat + advanced tutorials
+              </h3>
+              <p className="text-emerald-100/80 text-sm max-w-lg">
+                Upgrade to XLSBuddy Pro and get unlimited formula help, priority AI responses, and exclusive advanced Excel content.
+              </p>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              <Link to="/pricing">
+                <Button className="rounded-full bg-white text-[#1D6F42] hover:bg-white/90 font-bold px-6 shadow-lg">
+                  Upgrade to Pro
+                </Button>
+              </Link>
+              <a href="https://wa.me/?text=Check%20out%20XLSBuddy%20-%20the%20best%20Excel%20formula%20helper!%20https://xlsbuddy.vercel.app" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 px-6">
+                  Share App
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   );
