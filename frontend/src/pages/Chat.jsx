@@ -98,7 +98,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#030712] flex flex-col">
+    <div className="min-h-screen page-bg flex flex-col">
       <Header />
       <main className="flex-1 max-w-[1400px] mx-auto w-full px-0 lg:px-10 py-0 lg:py-6 grid grid-cols-1 lg:grid-cols-12 gap-0 lg:gap-6" data-testid="chat-page">
 

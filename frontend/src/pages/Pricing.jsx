@@ -74,7 +74,7 @@ export default function Pricing() {
   const limit = config?.free_daily_chat_limit ?? 5;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen page-bg">
       <Header />
       <main className="max-w-[1200px] mx-auto px-6 lg:px-10 py-12 lg:py-16" data-testid="pricing-page">
         <div className="overline klein mb-3">PRICING</div>

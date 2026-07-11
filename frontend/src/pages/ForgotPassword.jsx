@@ -26,7 +26,7 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-white dark:bg-[#030712]">
+    <div className="min-h-screen flex items-center justify-center p-6 page-bg">
       <div className="w-full max-w-md">
         <Link to="/login" className="flex items-center gap-2 overline text-muted-foreground hover:text-foreground mb-8">
           <ArrowLeft size={14} /> BACK TO SIGN IN

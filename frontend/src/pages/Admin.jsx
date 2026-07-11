@@ -250,7 +250,7 @@ setTutorials(t.data);
               }
             };
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen page-bg">
       <Header />
       <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-14" data-testid="admin-page">
         <div className="flex items-center gap-3 mb-3">

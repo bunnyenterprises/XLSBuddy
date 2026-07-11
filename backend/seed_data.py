@@ -2794,3 +2794,88 @@ End Sub
 ```"""
     },
 ]
+
+# Merge media (image + video) into tutorials by title
+_TUTORIAL_MEDIA = {
+    "Mastering VLOOKUP: From Beginner to Pro": {
+        "image_url": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+vlookup+tutorial+beginners",
+    },
+    "Pivot Tables Demystified": {
+        "image_url": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+pivot+table+tutorial",
+    },
+    "Conditional Formatting Like a Designer": {
+        "image_url": "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+conditional+formatting+tutorial",
+    },
+    "Fixing #DIV/0!, #N/A, and #VALUE! Errors": {
+        "image_url": "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+formula+errors+fix+tutorial",
+    },
+    "Power Query: Transform Data Without Formulas": {
+        "image_url": "https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+power+query+tutorial+beginners",
+    },
+    "Dynamic Arrays: FILTER, SORT, UNIQUE, SEQUENCE": {
+        "image_url": "https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+dynamic+arrays+filter+sort+unique",
+    },
+    "Building a Sales Dashboard from Scratch": {
+        "image_url": "https://images.unsplash.com/photo-1666875753105-c63a6f3bdc86?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+sales+dashboard+tutorial",
+    },
+    "Financial Modeling: Loan Amortization Schedule": {
+        "image_url": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+loan+amortization+schedule+PMT",
+    },
+    "Macros & VBA: Automate Repetitive Tasks": {
+        "image_url": "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+vba+macro+tutorial+beginners",
+    },
+    "Power BI and Excel: Working Together": {
+        "image_url": "https://images.unsplash.com/photo-1629904853893-c2c8981a1dc5?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=power+bi+excel+tutorial+beginners",
+    },
+    "LET and LAMBDA: Build Your Own Excel Functions": {
+        "image_url": "https://images.unsplash.com/photo-1607706189992-eae578626c86?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+lambda+let+function+tutorial",
+    },
+    "Power Pivot and DAX: Intro for Excel Users": {
+        "image_url": "https://images.unsplash.com/photo-1543286386-713bdd548da4?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+power+pivot+dax+tutorial",
+    },
+    "Advanced VBA: UserForms and Event Handlers": {
+        "image_url": "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+vba+userform+tutorial",
+    },
+    "Dynamic Arrays: The New Way to Write Formulas": {
+        "image_url": "https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+365+dynamic+array+formulas",
+    },
+    "Macro Scripting: 10 VBA Scripts Every Analyst Needs": {
+        "image_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+vba+analyst+automation+scripts",
+    },
+    "INDEX + MATCH: The VLOOKUP Killer": {
+        "image_url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+index+match+tutorial",
+    },
+    "XLOOKUP: The Modern VLOOKUP Replacement": {
+        "image_url": "https://images.unsplash.com/photo-1434494878577-86c23bcb06b9?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+xlookup+tutorial",
+    },
+    "Charts That Actually Communicate": {
+        "image_url": "https://images.unsplash.com/photo-1488229297570-58520851e868?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+charts+dashboard+tutorial",
+    },
+    "Data Validation: Dropdowns, Rules and Error Messages": {
+        "image_url": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80&auto=format&fit=crop",
+        "video_url": "https://www.youtube.com/results?search_query=excel+data+validation+dropdown+tutorial",
+    },
+}
+
+TUTORIALS = [
+    {**t, **_TUTORIAL_MEDIA.get(t["title"], {"image_url": "", "video_url": ""})}
+    for t in TUTORIALS
+]

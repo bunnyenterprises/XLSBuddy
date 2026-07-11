@@ -45,7 +45,7 @@ export default function FormulaGenerator() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen page-bg">
       <Header />
       <main className="max-w-[860px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
         <div className="overline klein mb-3">AI FORMULA GENERATOR</div>

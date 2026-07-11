@@ -52,7 +52,7 @@ export default function Bookmarks() {
   const tutorials = bookmarks.filter((b) => b.item_type === "tutorial");
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen page-bg">
       <Header />
       <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
         <div className="overline klein mb-3">SAVED</div>

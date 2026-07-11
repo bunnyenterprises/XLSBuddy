@@ -520,7 +520,7 @@ async def seed_db():
     needs_tutorial_reseed = await db.tutorials.count_documents({}) == 0
     if not needs_tutorial_reseed:
         t_sample = await db.tutorials.find_one({}, {"_id": 0})
-        if t_sample and "is_pro" not in t_sample:
+        if t_sample and ("is_pro" not in t_sample or "image_url" not in t_sample):
             needs_tutorial_reseed = True
     if needs_tutorial_reseed:
         await db.tutorials.delete_many({})

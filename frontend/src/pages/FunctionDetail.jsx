@@ -56,12 +56,12 @@ export default function FunctionDetail() {
   };
 
   if (loading) return (
-    <div className="min-h-screen bg-white dark:bg-gray-950"><Header />
+    <div className="min-h-screen page-bg"><Header />
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12 overline text-muted-foreground">Loading…</div>
     </div>
   );
   if (!func) return (
-    <div className="min-h-screen bg-white dark:bg-gray-950"><Header />
+    <div className="min-h-screen page-bg"><Header />
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 py-12">Function not found.</div>
     </div>
   );
@@ -70,7 +70,7 @@ export default function FunctionDetail() {
   const hasVideos = func.video_url || func.video_url_hindi;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 dark:text-white">
+    <div className="min-h-screen page-bg dark:text-white">
       <Header />
       <main className="max-w-[1100px] mx-auto px-6 lg:px-10 py-10 lg:py-14" data-testid="function-detail-page">
         <button onClick={() => navigate(-1)} className="overline mb-6 flex items-center gap-2 hover:klein dark:text-gray-400" data-testid="back-button">

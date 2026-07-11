@@ -20,7 +20,7 @@ export default function Landing() {
     : null;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#030712] text-foreground dark:text-white">
+    <div className="min-h-screen page-bg text-foreground dark:text-white">
       <Header />
 
       {/* HERO */}

@@ -9,14 +9,21 @@ import {
   ArrowLeft,
   BookmarkSimple,
   MicrosoftExcelLogo,
-  Table
+  YoutubeLogo,
+  Play,
 } from "@phosphor-icons/react";
+
+function getYouTubeEmbedId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
 
 function renderMarkdown(md) {
   if (!md) return "";
   let html = md;
   html = html.replace(/```([a-z]*)\n([\s\S]*?)```/g, (_, lang, code) =>
-    `<pre><code>${code.replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</code></pre>`);
+    `<pre><code class="lang-${lang}">${code.replace(/[<>&]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;"}[c]))}</code></pre>`);
   html = html.replace(/^### (.*)$/gm, "<h3>$1</h3>");
   html = html.replace(/^## (.*)$/gm, "<h2>$1</h2>");
   html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
@@ -52,6 +59,7 @@ export default function TutorialDetail() {
   const [loading, setLoading] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);
   const [bookmarkLoading, setBookmarkLoading] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   useEffect(() => {
     api.get(`/tutorials/${id}`).then((r) => setTut(r.data)).finally(() => setLoading(false));
@@ -81,61 +89,150 @@ export default function TutorialDetail() {
   };
 
   if (loading) return (
-    <div className="min-h-screen excel-bg dark:text-white"><Header />
+    <div className="min-h-screen page-bg dark:text-white"><Header />
       <div className="max-w-[1100px] mx-auto px-6 lg:px-10 py-12 overline text-slate-500 dark:text-slate-400">Loading...</div>
     </div>
   );
 
   if (!tut) return (
-    <div className="min-h-screen excel-bg dark:text-white"><Header />
+    <div className="min-h-screen page-bg dark:text-white"><Header />
       <div className="max-w-[1100px] mx-auto px-6 lg:px-10 py-12 text-gray-950 dark:text-white">Tutorial not found.</div>
     </div>
   );
 
+  const embedId = getYouTubeEmbedId(tut.video_url);
+
   return (
-    <div className="min-h-screen excel-bg dark:text-white">
+    <div className="min-h-screen page-bg dark:text-white">
       <Header />
       <main className="max-w-[860px] mx-auto px-6 lg:px-10 py-10 lg:py-14" data-testid="tutorial-detail-page">
         <button onClick={() => navigate(-1)} className="overline mb-6 flex items-center gap-2 text-slate-600 hover:klein dark:text-slate-400" data-testid="back-button">
           <ArrowLeft size={14} /> BACK
         </button>
 
-        <article className="bg-white/95 dark:bg-slate-950/90 border border-foreground/10 p-6 lg:p-8 shadow-sm">
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div className="flex gap-2">
-              <Badge variant="outline" className="rounded-none border-foreground/20 bg-white dark:bg-gray-900 dark:text-slate-200">{tut.category}</Badge>
-              {tut.level && <Badge className="rounded-none bg-klein text-white">{tut.level}</Badge>}
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleBookmark}
-              disabled={bookmarkLoading}
-              className="rounded-none border-foreground/20 bg-white dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
-            >
-              {bookmarked
-                ? <><BookmarkSimple size={15} className="mr-1.5 klein" /> Saved</>
-                : <><BookmarkSimple size={15} className="mr-1.5" /> Bookmark</>
-              }
-            </Button>
-          </div>
+        <article className="bg-white/95 dark:bg-slate-950/90 border border-foreground/10 shadow-sm overflow-hidden">
 
-          <div className="overline text-emerald-700 dark:text-emerald-300/90 mb-3 flex items-center gap-2 tracking-[0.16em]">
-            <MicrosoftExcelLogo size={16} weight="fill" />
-            Spreadsheet lesson
-          </div>
-          <h1 className="max-w-3xl page-title mb-4 text-slate-950 dark:text-slate-100">{tut.title}</h1>
-          <p className="text-base lg:text-[1.0625rem] text-slate-600 dark:text-slate-300 leading-7 mb-8 border-l-2 border-blue-600 pl-4">{tut.summary}</p>
-          <div className="mb-10 grid grid-cols-4 border-l border-t border-emerald-700/15 dark:border-emerald-400/15 text-xs font-mono text-slate-500 dark:text-slate-400">
-            {["A", "B", "C", "fx"].map((cell) => (
-              <div key={cell} className="border-r border-b border-emerald-700/15 dark:border-emerald-400/15 bg-emerald-50/60 dark:bg-emerald-950/10 px-3 py-2 flex items-center gap-2">
-                {cell === "fx" && <Table size={14} />}
-                {cell}
+          {/* Hero image */}
+          {tut.image_url && (
+            <div className="relative w-full h-52 lg:h-72 overflow-hidden">
+              <img
+                src={tut.image_url}
+                alt={tut.title}
+                className="w-full h-full object-cover"
+                onError={(e) => { e.target.closest(".relative").style.display = "none"; }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-6 flex gap-2">
+                <Badge variant="outline" className="rounded-none border-white/40 bg-black/40 text-white backdrop-blur-sm">{tut.category}</Badge>
+                {tut.level && <Badge className="rounded-none bg-klein text-white">{tut.level}</Badge>}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
 
-          <div className="markdown" dangerouslySetInnerHTML={{ __html: renderMarkdown(tut.content) }} />
+          <div className="p-6 lg:p-8">
+            {/* Badges (when no image) */}
+            {!tut.image_url && (
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div className="flex gap-2">
+                  <Badge variant="outline" className="rounded-none border-foreground/20 bg-white dark:bg-gray-900 dark:text-slate-200">{tut.category}</Badge>
+                  {tut.level && <Badge className="rounded-none bg-klein text-white">{tut.level}</Badge>}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleBookmark}
+                  disabled={bookmarkLoading}
+                  className="rounded-none border-foreground/20 bg-white dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
+                >
+                  {bookmarked
+                    ? <><BookmarkSimple size={15} className="mr-1.5 klein" /> Saved</>
+                    : <><BookmarkSimple size={15} className="mr-1.5" /> Bookmark</>
+                  }
+                </Button>
+              </div>
+            )}
+
+            {/* Bookmark button (when image exists) */}
+            {tut.image_url && (
+              <div className="flex justify-end mb-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleBookmark}
+                  disabled={bookmarkLoading}
+                  className="rounded-none border-foreground/20 bg-white dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
+                >
+                  {bookmarked
+                    ? <><BookmarkSimple size={15} className="mr-1.5 klein" /> Saved</>
+                    : <><BookmarkSimple size={15} className="mr-1.5" /> Bookmark</>
+                  }
+                </Button>
+              </div>
+            )}
+
+            <div className="overline text-emerald-700 dark:text-emerald-300/90 mb-3 flex items-center gap-2 tracking-[0.16em]">
+              <MicrosoftExcelLogo size={16} weight="fill" />
+              Spreadsheet lesson
+            </div>
+            <h1 className="max-w-3xl page-title mb-4 text-slate-950 dark:text-slate-100">{tut.title}</h1>
+            <p className="text-base lg:text-[1.0625rem] text-slate-600 dark:text-slate-300 leading-7 mb-6 border-l-2 border-blue-600 pl-4">{tut.summary}</p>
+
+            {/* YouTube video embed */}
+            {embedId && (
+              <div className="mb-8">
+                {!videoPlaying ? (
+                  <button
+                    onClick={() => setVideoPlaying(true)}
+                    className="relative w-full aspect-video bg-black overflow-hidden group border border-foreground/10"
+                    style={{ display: "block" }}
+                  >
+                    <img
+                      src={`https://img.youtube.com/vi/${embedId}/maxresdefault.jpg`}
+                      alt="Video thumbnail"
+                      className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                        <Play size={28} weight="fill" className="text-white ml-1" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+                      <YoutubeLogo size={16} weight="fill" className="text-red-500" />
+                      Watch video tutorial
+                    </div>
+                  </button>
+                ) : (
+                  <div className="w-full aspect-video border border-foreground/10">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${embedId}?autoplay=1`}
+                      title="Tutorial video"
+                      className="w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Video search link (no embed ID but has video_url) */}
+            {tut.video_url && !embedId && (
+              <a
+                href={tut.video_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 mb-8 p-4 border border-red-200 dark:border-red-900/40 bg-red-50 dark:bg-red-950/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/40 transition-colors"
+              >
+                <YoutubeLogo size={24} weight="fill" className="text-red-600 shrink-0" />
+                <div>
+                  <div className="font-bold text-sm">Watch video tutorials on YouTube</div>
+                  <div className="text-xs opacity-70">Opens in a new tab</div>
+                </div>
+              </a>
+            )}
+
+            <div className="markdown" dangerouslySetInnerHTML={{ __html: renderMarkdown(tut.content) }} />
+          </div>
         </article>
       </main>
     </div>
