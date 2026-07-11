@@ -97,30 +97,31 @@ export default function Landing() {
     <div className="min-h-screen page-bg text-foreground dark:text-white">
       <Header />
 
-      {/* HERO — dark navy, Excel-themed */}
-      <section className="relative overflow-hidden border-b border-foreground/15" style={{ background: "linear-gradient(135deg, #0a1628 0%, #0d2044 50%, #0a1628 100%)" }}>
-        {/* Subtle grid pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,0.8) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.8) 1px, transparent 1px)",
-          backgroundSize: "40px 24px"
+      {/* HERO — clean white with Excel mockup */}
+      <section className="relative overflow-hidden border-b border-foreground/15 bg-white dark:bg-[#030712]">
+        {/* Subtle spreadsheet grid pattern */}
+        <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.06]" style={{
+          backgroundImage: "linear-gradient(rgba(0,47,167,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(0,47,167,0.6) 1px, transparent 1px)",
+          backgroundSize: "44px 26px"
         }} aria-hidden />
-        {/* Klein glow left */}
-        <div className="absolute left-0 top-0 w-[40%] h-full pointer-events-none" style={{ background: "radial-gradient(ellipse at 0% 50%, rgba(0,47,167,0.35) 0%, transparent 70%)" }} aria-hidden />
-        {/* Green Excel glow right */}
-        <div className="absolute right-0 bottom-0 w-[40%] h-[60%] pointer-events-none" style={{ background: "radial-gradient(ellipse at 100% 100%, rgba(29,111,66,0.25) 0%, transparent 70%)" }} aria-hidden />
+        {/* Blue brand glow bottom-right */}
+        <div className="absolute right-0 bottom-0 w-[50%] h-[70%] pointer-events-none" style={{ background: "radial-gradient(ellipse at 80% 80%, rgba(37,99,235,0.10) 0%, transparent 65%)" }} aria-hidden />
+        {/* Fade left edge so text area is clean */}
+        <div className="absolute inset-0 dark:hidden pointer-events-none" style={{ background: "linear-gradient(105deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.95) 40%, rgba(255,255,255,0.4) 70%, rgba(255,255,255,0) 100%)" }} aria-hidden />
+        <div className="absolute inset-0 hidden dark:block pointer-events-none" style={{ background: "linear-gradient(105deg, rgba(3,7,18,1) 0%, rgba(3,7,18,0.95) 40%, rgba(3,7,18,0.4) 70%, rgba(3,7,18,0) 100%)" }} aria-hidden />
 
         <div className="relative max-w-[1400px] mx-auto px-6 lg:px-10 pt-20 pb-28">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
             {/* Left — copy */}
             <div className="lg:col-span-6 slide-in">
-              <div className="overline mb-6 text-blue-400">EXCEL · DECODED</div>
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight leading-tight mb-8 text-white">
+              <div className="overline klein mb-6">EXCEL · DECODED</div>
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold tracking-tight leading-tight mb-8">
                 Every Excel formula.<br/>
                 Every error.<br/>
-                <span style={{ color: "#7AA0FF" }}>Solved.</span>
+                <span className="klein">Solved.</span>
               </h1>
-              <p className="text-base sm:text-lg max-w-xl text-blue-100/70 mb-10 leading-relaxed">
+              <p className="text-base sm:text-lg max-w-xl text-muted-foreground mb-10 leading-relaxed">
                 Browse 60+ Excel functions with live examples. Read curated tutorials.
                 Ask our AI anything — get answers in seconds, not hours.
               </p>
@@ -131,12 +132,12 @@ export default function Landing() {
                   </Button>
                 </Link>
                 <Link to="/login" data-testid="hero-cta-login">
-                  <Button size="lg" variant="outline" className="rounded-none border-white/30 text-white hover:bg-white/10 h-14 px-8 text-base">
+                  <Button size="lg" variant="outline" className="rounded-none border-foreground/30 h-14 px-8 text-base">
                     Sign in
                   </Button>
                 </Link>
               </div>
-              <div className="mt-12 flex flex-wrap gap-x-10 gap-y-3 overline text-blue-300/60">
+              <div className="mt-12 flex flex-wrap gap-x-10 gap-y-3 overline text-foreground/50">
                 <span>100+ FUNCTIONS</span>
                 <span>LIVE EXCEL PREVIEW</span>
                 <span>0$ TO START</span>
