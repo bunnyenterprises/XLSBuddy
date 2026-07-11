@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { Crown, Users, Star, ChartBar, GearSix, FloppyDisk, Eye, EyeSlash } from "@phosphor-icons/react";
 
 const StatCard = ({ label, value, accent = "klein" }) => (
-  <div className="border-r border-b border-foreground/15 p-6 bg-white">
+  <div className="border-r border-b border-foreground/15 p-6 bg-white dark:bg-[#111827]">
     <div className="overline mb-2">{label}</div>
     <div className={`metric-title ${accent === "klein" ? "klein" : ""}`}>{value}</div>
   </div>
@@ -322,7 +322,7 @@ setTutorials(t.data);
              </button>
            </div>
               {showAddTutorial && (
-                <div className="border p-4 rounded mb-4 bg-white">
+                <div className="border border-foreground/15 p-6 mb-4 bg-white dark:bg-[#111827]">
                   <h3 className="font-bold mb-3">Add New Tutorial</h3>
 
                <input
@@ -384,7 +384,7 @@ setTutorials(t.data);
   </div>
 )}
              {showEditTutorial && editingTutorial && (
-               <div className="border p-4 rounded mb-4 bg-yellow-50">
+               <div className="border border-klein/40 p-6 mb-4 bg-white dark:bg-[#111827]">
                  <h3 className="font-bold mb-3">Edit Tutorial</h3>
                  <input placeholder="Tutorial Title" className="w-full border p-2 rounded mb-2" value={editingTutorial.title} onChange={(e) => setEditingTutorial({ ...editingTutorial, title: e.target.value })} />
                  <input placeholder="Category" className="w-full border p-2 rounded mb-2" value={editingTutorial.category} onChange={(e) => setEditingTutorial({ ...editingTutorial, category: e.target.value })} />
@@ -445,7 +445,7 @@ setTutorials(t.data);
           {/* SETTINGS */}
           <TabsContent value="settings" className="mt-6">
             {settings ? (
-              <div className="max-w-2xl border border-foreground/15 p-8 bg-white">
+              <div className="max-w-2xl border border-foreground/15 p-8 bg-white dark:bg-[#111827]">
                 <div className="overline klein mb-6">PAYMENT & APP CONFIG</div>
 
                 <div className="space-y-5">
@@ -577,7 +577,7 @@ setTutorials(t.data);
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-0 border-l border-t border-foreground/15">
                 {reviews.map((r) => (
-                  <div key={r.id} className="border-r border-b border-foreground/15 p-6 bg-white" data-testid={`admin-review-${r.id}`}>
+                  <div key={r.id} className="border-r border-b border-foreground/15 p-6 bg-white dark:bg-[#111827]" data-testid={`admin-review-${r.id}`}>
                     <div className="flex items-center justify-between mb-3">
                       <div className="font-bold">{r.user_name}</div>
                       <div className="flex">
@@ -604,7 +604,7 @@ setTutorials(t.data);
                 </button>
                </div>
                {showAddFormula && (
-                <div className="border p-4 rounded mb-4 bg-white">
+                <div className="border border-foreground/15 p-6 mb-4 bg-white dark:bg-[#111827]">
                   <h3 className="font-bold mb-3">Add New Formula</h3>
                 
                   <input
@@ -654,7 +654,7 @@ setTutorials(t.data);
   </div>
 )}
                {showEditFormula && editingFormula && (
-                 <div className="border p-4 rounded mb-4 bg-yellow-50">
+                 <div className="border border-klein/40 p-6 mb-4 bg-white dark:bg-[#111827]">
                  <h3 className="font-bold mb-3">Edit Formula</h3>
 
     <input

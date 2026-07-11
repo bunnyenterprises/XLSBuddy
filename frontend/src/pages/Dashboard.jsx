@@ -1,87 +1,98 @@
-﻿import React from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
 import { ChartLine, BookOpen, ChatCircleDots, MagnifyingGlass, BookmarkSimple, ArrowUpRight, Sparkle } from "@phosphor-icons/react";
 
 export default function Dashboard() {
   const { user } = useAuth();
 
   const tiles = [
-    { to: "/functions", title: "Functions Library", desc: "Browse 60+ Excel functions by category. Syntax, examples, and real use cases.", icon: ChartLine, accent: "white" },
-    { to: "/chat", title: "AI Assistant", desc: "Ask Claude Sonnet anything about Excel — formulas, errors, best practices.", icon: ChatCircleDots, accent: "black" },
-    { to: "/tutorials", title: "Tutorials", desc: "Curated guides for pivots, lookups, conditional formatting, errors, and more.", icon: BookOpen, accent: "white" },
-    { to: "/bookmarks", title: "Bookmarks", desc: "Quick access to functions and tutorials you've saved.", icon: BookmarkSimple, accent: "secondary" },
-    { to: "/formula-generator", title: "Formula Generator", desc: "Describe what you want in plain English — get the exact Excel formula instantly.", icon: Sparkle, accent: "klein" },
-    { to: "/functions?focus=search", title: "Quick Search", desc: "Find any function in less than a second by name or use case.", icon: MagnifyingGlass, accent: "secondary" },
+    { to: "/functions", title: "Functions Library", desc: "Browse 60+ Excel functions by category. Syntax, examples, and real use cases.", icon: ChartLine },
+    { to: "/chat", title: "AI Assistant", desc: "Ask anything about Excel — formulas, errors, best practices — and get instant answers.", icon: ChatCircleDots },
+    { to: "/tutorials", title: "Tutorials", desc: "Curated guides for pivots, lookups, conditional formatting, errors, and more.", icon: BookOpen },
+    { to: "/bookmarks", title: "Bookmarks", desc: "Quick access to functions and tutorials you've saved.", icon: BookmarkSimple },
+    { to: "/formula-generator", title: "Formula Generator", desc: "Describe what you want in plain English — get the exact Excel formula instantly.", icon: Sparkle },
+    { to: "/functions?focus=search", title: "Quick Search", desc: "Find any function in less than a second by name or use case.", icon: MagnifyingGlass },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-gray-950 dark:to-gray-900">
+    <div className="min-h-screen page-bg">
       <Header />
-      <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-8 lg:py-10">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 text-white p-8 lg:p-12 mb-10 shadow-xl">
-          <div className="text-sm uppercase tracking-widest opacity-80 mb-3">XLSBUDDY</div>
-          <div className="absolute right-8 top-1/2 -translate-y-1/2 opacity-10 pointer-events-none">
-            <div className="text-[300px] font-black">XLS</div>
+      <main className="max-w-[1400px] mx-auto px-6 lg:px-10 py-10 lg:py-14">
+
+        {/* Hero — sharp, klein, consistent with rest of app */}
+        <div className="bg-klein text-white p-8 lg:p-12 mb-10 relative overflow-hidden">
+          <div className="absolute right-0 top-0 bottom-0 flex items-center justify-end pr-8 pointer-events-none opacity-[0.06]">
+            <div className="text-[180px] font-black leading-none select-none">XLS</div>
           </div>
-          <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
-            Welcome back, {user?.name?.split(" ")[0] || "there"} 👋
-          </h1>
-          <p className="text-lg text-blue-100 max-w-2xl">
-            Search Excel formulas, learn tutorials, and get AI-powered Excel help in seconds.
-          </p>
-          <div className="flex flex-wrap gap-4 mt-6">
-            <Link to="/functions" className="bg-white/90 backdrop-blur-sm text-blue-700 px-5 py-3 rounded-xl font-semibold">
-              Browse Functions
-            </Link>
-            <Link to="/chat" className="bg-white/20 px-5 py-3 rounded-xl font-semibold">
-              Ask AI
-            </Link>
-            <Link to="/tutorials" className="bg-white/20 px-5 py-3 rounded-xl font-semibold">
-              Tutorials
-            </Link>
+          <div className="relative">
+            <div className="overline mb-4 text-white/70">XLSBUDDY DASHBOARD</div>
+            <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
+              Welcome back, {user?.name?.split(" ")[0] || "there"}.
+            </h1>
+            <p className="text-lg text-blue-100 max-w-2xl mb-6">
+              Search Excel formulas, learn tutorials, and get AI-powered help in seconds.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/functions">
+                <Button className="rounded-none bg-white text-klein hover:bg-white/90 h-11 px-6 font-bold">
+                  Browse Functions
+                </Button>
+              </Link>
+              <Link to="/chat">
+                <Button variant="outline" className="rounded-none border-white/40 text-white hover:bg-white/10 h-11 px-6">
+                  Ask AI
+                </Button>
+              </Link>
+              <Link to="/tutorials">
+                <Button variant="outline" className="rounded-none border-white/40 text-white hover:bg-white/10 h-11 px-6">
+                  Tutorials
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Stats row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border-l border-t border-foreground/15 mb-10">
+          {[
+            { k: "60+", v: "FUNCTIONS" },
+            { k: "12+", v: "TUTORIALS" },
+            { k: "AI", v: "ASSISTANT" },
+            { k: "24/7", v: "SUPPORT" },
+          ].map((s) => (
+            <div key={s.v} className="border-r border-b border-foreground/15 p-6 lg:p-8 bg-white dark:bg-[#111827]">
+              <div className="metric-title klein">{s.k}</div>
+              <div className="overline mt-2 text-muted-foreground">{s.v}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tools grid */}
+        <div className="overline klein mb-3">TOOLS</div>
+        <h2 className="text-2xl font-extrabold tracking-tight mb-8">Everything you need.</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border-l border-t border-foreground/15">
           {tiles.map((t, i) => {
             const Icon = t.icon;
-            const isBlack = t.accent === "black";
-            const isSecondary = t.accent === "secondary";
             return (
               <Link
                 to={t.to}
                 key={t.to}
-                data-testid={`tile-${t.title.toLowerCase().replace(/[^a-z]/g, '-')}`}
-                style={{ animationDelay: `${i * 0.05}s` }}
-                className={`relative group border border-foreground/10 rounded-2xl p-8 lg:p-10 lift slide-in shadow-sm hover:shadow-xl transition-all duration-300 ${
-                  isBlack ? "bg-black text-white" : isSecondary ? "bg-secondary dark:bg-gray-800" : "bg-white dark:bg-gray-900 dark:text-white"
-                }`}
+                data-testid={`tile-${t.title.toLowerCase().replace(/[^a-z]/g, "-")}`}
+                className="group border-r border-b border-foreground/15 p-8 lg:p-10 lift bg-white dark:bg-[#111827] hover:bg-secondary dark:hover:bg-[#1a2235] transition-colors"
               >
-                <Icon size={36} weight="duotone" className={isBlack ? "text-[#7AA0FF]" : "klein"} />
-                <div className={`overline mt-6 mb-2 ${isBlack ? "text-white/60" : "text-muted-foreground"}`}>0{i + 1}</div>
-                <h3 className="section-title mb-3">{t.title}</h3>
-                <p className={`text-sm leading-relaxed ${isBlack ? "text-white/75" : "text-muted-foreground"}`}>{t.desc}</p>
-                <ArrowUpRight size={22} className="absolute top-6 right-6 opacity-60 group-hover:opacity-100 transition-opacity" />
+                <Icon size={32} weight="duotone" className="klein mb-4" />
+                <div className="overline mb-2 text-muted-foreground">0{i + 1}</div>
+                <h3 className="font-bold text-lg tracking-tight mb-2">{t.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{t.desc}</p>
+                <ArrowUpRight size={20} className="mt-4 opacity-40 group-hover:opacity-100 group-hover:text-klein transition-all" />
               </Link>
             );
           })}
         </div>
 
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 border-l border-t border-foreground/15">
-          {[
-            { k: "60+", v: "FUNCTIONS" },
-            { k: "8", v: "TUTORIALS" },
-            { k: "AI", v: "ASSISTANT" },
-            { k: "24/7", v: "AI SUPPORT" },
-          ].map((s) => (
-            <div key={s.v} className="rounded-2xl border border-slate-200 dark:border-gray-700 p-6 lg:p-8 bg-white dark:bg-gray-900 shadow-sm">
-              <div className="metric-title klein">{s.k}</div>
-              <div className="overline mt-2 dark:text-gray-400">{s.v}</div>
-            </div>
-          ))}
-        </div>
       </main>
     </div>
   );
