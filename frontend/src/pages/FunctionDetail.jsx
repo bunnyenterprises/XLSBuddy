@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, ChatCircleDots, Function as FunctionIcon, Copy, Check, BookmarkSimple, YoutubeLogo, Crown, Lock } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
 
 export default function FunctionDetail() {
   const { id } = useParams();
