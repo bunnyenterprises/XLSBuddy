@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Analytics } from "@vercel/analytics/react";
 
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
@@ -56,6 +57,7 @@ function App() {
             </Routes>
             <Toaster richColors position="top-right" />
           </BrowserRouter>
+          <Analytics />
         </AuthProvider>
       </ThemeProvider>
     </div>
