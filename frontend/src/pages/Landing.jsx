@@ -353,14 +353,21 @@ export default function Landing() {
 
       {/* FOOTER */}
       <footer className="bg-black text-white border-t border-white/10 py-10">
-        <div className="max-w-[1400px] mx-auto px-6 lg:px-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#002FA7] flex items-center justify-center shrink-0">
-              <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontStyle:"italic",fontWeight:"bold",color:"white",fontSize:"11px",lineHeight:1}}>ƒx</span>
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-10">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#002FA7] flex items-center justify-center shrink-0">
+                <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontStyle:"italic",fontWeight:"bold",color:"white",fontSize:"11px",lineHeight:1}}>ƒx</span>
+              </div>
+              <span className="font-bold tracking-tight whitespace-nowrap">XLSBUDDY</span>
             </div>
-            <span className="font-bold tracking-tight whitespace-nowrap">XLSBUDDY</span>
+            <div className="flex flex-wrap gap-4 text-sm text-white/60">
+              <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+              <a href="mailto:rajel88@gmail.com" className="hover:text-white transition-colors">Contact</a>
+            </div>
           </div>
-          <div className="overline text-white/50">© 2026 · Built with rigor</div>
+          <div className="mt-6 pt-6 border-t border-white/10 overline text-white/30">© 2026 XLSBuddy · Bunny Enterprises</div>
         </div>
       </footer>
     </div>

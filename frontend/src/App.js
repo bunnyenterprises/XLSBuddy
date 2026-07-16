@@ -22,6 +22,8 @@ import Admin from "@/pages/Admin";
 import Bookmarks from "@/pages/Bookmarks";
 import ForgotPassword from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import Terms from "@/pages/Terms";
 
 const HomeGuard = () => {
   const { user, loading } = useAuth();
@@ -52,6 +54,8 @@ function App() {
               <Route path="/formula-generator" element={<ProtectedRoute><FormulaGenerator /></ProtectedRoute>} />
               <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <Toaster richColors position="top-right" />
