@@ -85,32 +85,31 @@ export default function Signup() {
           />
 
           <div className="text-sm text-muted-foreground">
-            Already have an account? <Link to="/login" className="klein font-bold underline" data-testid="signup-to-login">Sign in</Link>
+            Already have an account? <Link to="/login" className="klein font-bold" data-testid="signup-to-login">Sign in</Link>
           </div>
         </form>
       </div>
 
-      <div className="bg-black text-white p-12 lg:p-16 hidden lg:flex flex-col justify-between order-1 lg:order-2">
+      <div className="bg-[#002FA7] text-white p-12 lg:p-16 hidden lg:flex flex-col justify-between order-1 lg:order-2">
         <Link to="/" className="flex items-center gap-2" data-testid="signup-brand">
-          <div className="w-7 h-7 bg-[#002FA7] flex items-center justify-center shrink-0">
-            <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontStyle:"italic",fontWeight:"bold",color:"white",fontSize:"13px",lineHeight:1}}>ƒx</span>
+          <div className="w-8 h-8 bg-white rounded flex items-center justify-center shrink-0">
+            <span className="font-black text-[#002FA7] text-sm">XB</span>
           </div>
-          <span className="font-black tracking-tight whitespace-nowrap">XLSBUDDY</span>
+          <span className="font-black tracking-tight whitespace-nowrap">XLSBuddy</span>
         </Link>
         <div>
-          <div className="overline mb-6 text-white/60">JOIN</div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
             Stop googling.<br/>
             Start<br/>
-            <span className="text-[#7AA0FF]">mastering</span>.
+            <span className="text-white/70">mastering</span>.
           </h1>
           <ul className="mt-10 space-y-3 text-white/80">
             <li>60+ Excel functions, indexed</li>
-            <li>AI assistant on Claude Sonnet 4.5</li>
+            <li>AI assistant powered by Groq</li>
             <li>Curated tutorials for real workflows</li>
           </ul>
         </div>
-        <div className="overline text-white/50">002 / 002</div>
+        <div className="text-white/30 text-xs">© XLSBuddy</div>
       </div>
     </div>
   );

@@ -38,14 +38,13 @@ export default function Login() {
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
       {/* Left blue panel — desktop only */}
       <div className="bg-klein text-white p-12 lg:p-16 hidden lg:flex flex-col justify-between">
-        <Link to="/" className="flex items-center gap-2" data-testid="login-brand">
-          <div className="w-7 h-7 bg-white flex items-center justify-center shrink-0">
-            <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontStyle:"italic",fontWeight:"bold",color:"#002FA7",fontSize:"13px",lineHeight:1}}>ƒx</span>
+        <Link to="/" className="flex items-center gap-2 no-underline" data-testid="login-brand">
+          <div className="w-8 h-8 bg-white rounded flex items-center justify-center shrink-0">
+            <span className="font-black text-[#002FA7] text-sm">XB</span>
           </div>
-          <span className="font-black tracking-tight whitespace-nowrap">XLSBUDDY</span>
+          <span className="font-black tracking-tight whitespace-nowrap">XLSBuddy</span>
         </Link>
         <div>
-          <div className="overline mb-6 text-white/70">WELCOME BACK</div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
             Pick up<br/>where you<br/>left off.
           </h1>
@@ -53,7 +52,7 @@ export default function Login() {
             Your saved chats, recent searches, and bookmarked tutorials are waiting.
           </p>
         </div>
-        <div className="overline text-white/50">001 / 002</div>
+        <div className="text-white/30 text-xs">© XLSBuddy</div>
       </div>
 
       {/* Right form panel */}
@@ -122,7 +121,7 @@ export default function Login() {
 
           <div className="text-sm text-muted-foreground">
             New here?{" "}
-            <Link to="/signup" className="klein font-bold underline" data-testid="login-to-signup">
+            <Link to="/signup" className="klein font-bold" data-testid="login-to-signup">
               Create an account
             </Link>
           </div>
