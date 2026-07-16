@@ -10,7 +10,7 @@ from typing import Optional
 load_dotenv(str(Path(__file__).parent / ".env"))
 JWT_SECRET = os.environ['JWT_SECRET']
 JWT_ALG = "HS256"
-JWT_EXP_DAYS = 30
+JWT_EXP_MINUTES = 30
 SESSION_COOKIE_NAME = os.environ.get('AUTH_COOKIE_NAME', 'xlsbuddy_session')
 
 
@@ -26,7 +26,7 @@ def create_token(user_id: str) -> str:
     payload = {
         "sub": user_id,
         "iat": datetime.now(timezone.utc),
-        "exp": datetime.now(timezone.utc) + timedelta(days=JWT_EXP_DAYS),
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=JWT_EXP_MINUTES),
     }
     return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALG)
 
