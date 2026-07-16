@@ -32,10 +32,9 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white dark:bg-gray-950 dark:border-white/10 border-b border-foreground/15" data-testid="app-header">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group" data-testid="brand-link">
-          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="30" height="30" fill="#002FA7"/>
-            <text x="15" y="21" textAnchor="middle" fill="white" fontSize="13" fontWeight="bold" fontFamily="Georgia, 'Times New Roman', serif" fontStyle="italic">ƒx</text>
-          </svg>
+          <div className="w-8 h-8 bg-[#002FA7] flex items-center justify-center shrink-0">
+            <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontStyle:"italic",fontWeight:"bold",color:"white",fontSize:"13px",lineHeight:1,letterSpacing:"-0.5px"}}>ƒx</span>
+          </div>
           <span className="font-black tracking-tight text-lg dark:text-white whitespace-nowrap">XLS<span className="klein">Buddy</span></span>
         </Link>
 
