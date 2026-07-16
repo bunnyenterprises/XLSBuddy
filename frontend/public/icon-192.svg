@@ -1,42 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
-  <!-- White background -->
-  <rect width="192" height="192" rx="28" fill="white"/>
-
-  <!-- Green X (12-point polygon) -->
-  <polygon
-    points="18,18 36,18 58,58 80,18 98,18 73,66 98,114 80,114 58,74 36,114 18,114 43,66"
-    fill="#1DAF47"/>
-
-  <!-- Navy B with green spreadsheet grid inside -->
-  <defs>
-    <clipPath id="bc">
-      <path d="M84,18 L84,114 L100,114 Q158,114 158,91 Q158,68 100,68 Q146,68 146,43 Q146,18 100,18 Z"/>
-    </clipPath>
-  </defs>
-
-  <!-- B solid fill -->
-  <path d="M84,18 L84,114 L100,114 Q158,114 158,91 Q158,68 100,68 Q146,68 146,43 Q146,18 100,18 Z" fill="#0D1B3C"/>
-
-  <!-- Green grid lines clipped to B shape -->
-  <g clip-path="url(#bc)">
-    <line x1="84"  y1="35" x2="158" y2="35" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="84"  y1="51" x2="158" y2="51" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="84"  y1="68" x2="158" y2="68" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="84"  y1="85" x2="158" y2="85" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="84" y1="101" x2="158" y2="101" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="108" y1="18" x2="108" y2="114" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="127" y1="18" x2="127" y2="114" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-    <line x1="143" y1="18" x2="143" y2="114" stroke="#1DAF47" stroke-width="2" opacity="0.65"/>
-  </g>
-
-  <!-- XLSBuddy -->
-  <text x="96" y="148" font-family="'Arial Black', Arial, sans-serif" font-size="22" font-weight="900" text-anchor="middle">
-    <tspan fill="#1DAF47">XLS</tspan><tspan fill="#0D1B3C">Buddy</tspan>
-  </text>
-
-  <!-- Dots separator -->
-  <text x="96" y="162" font-family="Arial, sans-serif" font-size="8" fill="#aaaaaa" text-anchor="middle" letter-spacing="1">· · ·</text>
-
-  <!-- Tagline -->
-  <text x="96" y="176" font-family="Arial, sans-serif" font-size="7.5" fill="#999999" text-anchor="middle" letter-spacing="1.2">SMARTER SHEETS. BETTER BUSINESS.</text>
+  <rect width="192" height="192" rx="36" fill="#002FA7"/>
+  <text x="96" y="110" font-family="Arial Black, Arial, sans-serif" font-size="72" font-weight="900" fill="white" text-anchor="middle">XB</text>
+  <text x="96" y="148" font-family="Arial Black, Arial, sans-serif" font-size="20" font-weight="700" fill="white" opacity="0.85" text-anchor="middle">XLSBuddy</text>
+  <text x="96" y="168" font-family="Arial, sans-serif" font-size="10" fill="white" opacity="0.5" text-anchor="middle" letter-spacing="2">LEARN EXCEL</text>
 </svg>
