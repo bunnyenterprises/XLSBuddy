@@ -30,7 +30,7 @@ export const Header = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white dark:bg-gray-950 dark:border-white/10 border-b border-foreground/15" data-testid="app-header">
+    <header className="sticky top-0 z-40 bg-white dark:bg-[#162038] dark:border-white/10 border-b border-foreground/15" data-testid="app-header">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group" data-testid="brand-link">
           <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -156,7 +156,7 @@ export const Header = () => {
       </div>
 
       {user && open && (
-        <div className="lg:hidden border-t border-foreground/15 dark:border-white/10 px-6 py-3 space-y-1 bg-white dark:bg-gray-950">
+        <div className="lg:hidden border-t border-foreground/15 dark:border-white/10 px-6 py-3 space-y-1 bg-white dark:bg-[#162038]">
           {navItems.map(({ to, label, icon: Icon }) => (
             <Link
               key={to}

@@ -107,12 +107,12 @@ code, pre {
     radial-gradient(ellipse 40% 40% at 30% 80%, rgba(59,130,246,0.10) 0%, transparent 100%);
 }
 .dark .page-bg {
-  background-color: #040a1c;
+  background-color: #111d36;
   background-image:
-    radial-gradient(ellipse 70% 60% at 10% 10%, rgba(37,99,235,0.32) 0%, transparent 100%),
-    radial-gradient(ellipse 60% 55% at 90% 85%, rgba(99,102,241,0.26) 0%, transparent 100%),
-    radial-gradient(ellipse 50% 45% at 55% 10%, rgba(139,92,246,0.14) 0%, transparent 100%),
-    radial-gradient(ellipse 40% 40% at 30% 80%, rgba(59,130,246,0.12) 0%, transparent 100%);
+    radial-gradient(ellipse 70% 60% at 10% 10%, rgba(37,99,235,0.20) 0%, transparent 100%),
+    radial-gradient(ellipse 60% 55% at 90% 85%, rgba(99,102,241,0.16) 0%, transparent 100%),
+    radial-gradient(ellipse 50% 45% at 55% 10%, rgba(139,92,246,0.09) 0%, transparent 100%),
+    radial-gradient(ellipse 40% 40% at 30% 80%, rgba(59,130,246,0.08) 0%, transparent 100%);
 }
 
 /* Hero lavender gradient */
@@ -120,7 +120,7 @@ code, pre {
   background: linear-gradient(135deg, #eef1ff 0%, #f4f0ff 40%, #e8f0ff 100%);
 }
 .dark .hero-bg {
-  background: linear-gradient(135deg, #0d0c24 0%, #120d2e 40%, #0a1228 100%);
+  background: linear-gradient(135deg, #151f3a 0%, #1a1440 40%, #121e38 100%);
 }
 
 /* Attractive lift card */
@@ -203,30 +203,30 @@ code, pre {
 /* Dark mode — CSS variables (fixes text/bg on ALL pages) */
 @layer base {
   .dark {
-    --background: 222 47% 4%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 6%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 6%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 4%;
-    --secondary: 215 28% 14%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 215 28% 14%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 215 28% 14%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 215 28% 18%;
-    --input: 215 28% 18%;
-    --ring: 217 91% 60%;
+    --background: 222 28% 12%;
+    --foreground: 210 35% 94%;
+    --card: 222 26% 17%;
+    --card-foreground: 210 35% 94%;
+    --popover: 222 26% 17%;
+    --popover-foreground: 210 35% 94%;
+    --primary: 217 91% 65%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 220 22% 24%;
+    --secondary-foreground: 210 35% 94%;
+    --muted: 220 22% 24%;
+    --muted-foreground: 215 18% 62%;
+    --accent: 220 22% 24%;
+    --accent-foreground: 210 35% 94%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 210 35% 94%;
+    --border: 220 20% 28%;
+    --input: 220 20% 26%;
+    --ring: 217 91% 65%;
   }
 }
 
 /* Overrides for hardcoded Tailwind white/secondary (not CSS-variable-based) */
-.dark .bg-white { background-color: #111827 !important; }
+.dark .bg-white { background-color: #1c2640 !important; }
 .dark .border-foreground\/15 { border-color: rgba(255,255,255,0.1); }
 .dark .bg-black { background-color: #000 !important; }
 .dark pre { background-color: #0a0a0a !important; }

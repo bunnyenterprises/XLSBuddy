@@ -69,7 +69,7 @@ export default function Dashboard() {
             { k: "AI", v: "ASSISTANT", color: "text-violet-600" },
             { k: "24/7", v: "SUPPORT", color: "text-blue-600" },
           ].map((s) => (
-            <div key={s.v} className="rounded-2xl p-6 lg:p-8 bg-white dark:bg-[#111827] shadow-sm border border-white/60 dark:border-white/5">
+            <div key={s.v} className="rounded-2xl p-6 lg:p-8 bg-white dark:bg-[#1c2d4a] shadow-sm border border-white/60 dark:border-white/5">
               <div className={`text-4xl font-black tracking-tight ${s.color}`}>{s.k}</div>
               <div className="text-[11px] font-bold tracking-widest text-muted-foreground mt-2 uppercase">{s.v}</div>
             </div>
@@ -87,7 +87,7 @@ export default function Dashboard() {
                 to={t.to}
                 key={t.to}
                 data-testid={`tile-${t.title.toLowerCase().replace(/[^a-z]/g, "-")}`}
-                className="group rounded-2xl p-7 lg:p-8 bg-white dark:bg-[#111827] shadow-sm border border-white/60 dark:border-white/5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+                className="group rounded-2xl p-7 lg:p-8 bg-white dark:bg-[#1c2d4a] shadow-sm border border-white/60 dark:border-white/5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
               >
                 <Icon size={32} weight="duotone" className="text-indigo-600 mb-4" />
                 <div className="text-[10px] font-bold tracking-widest text-muted-foreground mb-2">0{i + 1}</div>
