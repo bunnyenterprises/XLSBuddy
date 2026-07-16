@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Crown, Users, Star, ChartBar, GearSix, FloppyDisk, Eye, EyeSlash } from "@phosphor-icons/react";
+import { Crown, Users, Star, ChartBar, GearSix, FloppyDisk } from "@phosphor-icons/react";
 
 const StatCard = ({ label, value, accent = "klein" }) => (
   <div className="border-r border-b border-foreground/15 p-6 bg-white dark:bg-[#111827]">
@@ -28,7 +28,6 @@ export default function Admin() {
   const [tutorials, setTutorials] = useState([]); 
   const [formulaSearch, setFormulaSearch] = useState("");
   const [settings, setSettings] = useState(null);
-  const [showSecret, setShowSecret] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
   const [editingTutorial, setEditingTutorial] = useState(null);
   const [showEditTutorial, setShowEditTutorial] = useState(false);
@@ -90,8 +89,6 @@ setTutorials(t.data);
     setSavingSettings(true);
     try {
       const payload = {
-        razorpay_key_id: settings.razorpay_key_id || "",
-        razorpay_key_secret: settings.razorpay_key_secret || "",
         google_review_url: settings.google_review_url || "",
         pro_price_inr: parseInt(settings.pro_price_inr, 10) || 299,
         free_daily_chat_limit: parseInt(settings.free_daily_chat_limit, 10) || 5,
@@ -450,37 +447,15 @@ setTutorials(t.data);
 
                 <div className="space-y-5">
                   <div>
-                    <Label className="overline">RAZORPAY KEY ID</Label>
-                    <Input
-                      value={settings.razorpay_key_id || ""}
-                      onChange={(e) => setSettings({ ...settings, razorpay_key_id: e.target.value })}
-                      placeholder="rzp_test_xxxxxxxxxxxx"
-                      className="rounded-none border-foreground/30 h-11 mt-2 font-mono text-sm"
-                      data-testid="settings-razorpay-key-id"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">From Razorpay Dashboard → Settings → API Keys</p>
-                  </div>
-
-                  <div>
-                    <Label className="overline">RAZORPAY KEY SECRET</Label>
-                    <div className="relative mt-2">
-                      <Input
-                        type={showSecret ? "text" : "password"}
-                        value={settings.razorpay_key_secret || ""}
-                        onChange={(e) => setSettings({ ...settings, razorpay_key_secret: e.target.value })}
-                        placeholder="••••••••••••••••"
-                        className="rounded-none border-foreground/30 h-11 font-mono text-sm pr-10"
-                        data-testid="settings-razorpay-secret"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowSecret(!showSecret)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2"
-                      >
-                        {showSecret ? <EyeSlash size={16} /> : <Eye size={16} />}
-                      </button>
+                    <Label className="overline">RAZORPAY PAYMENTS</Label>
+                    <div className="mt-2 flex items-center gap-3">
+                      <span className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 border ${settings.razorpay_configured ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-300" : "border-red-300 bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"}`}>
+                        <span>{settings.razorpay_configured ? "✓ ACTIVE" : "✗ NOT CONFIGURED"}</span>
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {settings.razorpay_configured ? "Keys loaded from Render environment variables." : "Set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET on Render."}
+                      </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Stored encrypted in DB. Never exposed to frontend.</p>
                   </div>
 
                   <div>
