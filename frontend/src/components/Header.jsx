@@ -32,9 +32,21 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white dark:bg-gray-950 dark:border-white/10 border-b border-foreground/15" data-testid="app-header">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group" data-testid="brand-link">
-          <div className="w-8 h-8 bg-[#002FA7] flex items-center justify-center shrink-0">
-            <span style={{fontFamily:"Georgia,'Times New Roman',serif",fontStyle:"italic",fontWeight:"bold",color:"white",fontSize:"13px",lineHeight:1,letterSpacing:"-0.5px"}}>ƒx</span>
-          </div>
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect width="32" height="32" rx="5" fill="#002FA7"/>
+            <rect x="6" y="8" width="20" height="16" rx="3" fill="#001560"/>
+            <rect x="8" y="11" width="6" height="5" rx="2" fill="white"/>
+            <rect x="18" y="11" width="6" height="5" rx="2" fill="white"/>
+            <circle cx="11" cy="13.5" r="2.2" fill="#001560"/>
+            <circle cx="21" cy="13.5" r="2.2" fill="#001560"/>
+            <circle cx="9.5" cy="12" r="1" fill="white"/>
+            <circle cx="19.5" cy="12" r="1" fill="white"/>
+            <rect x="9" y="19" width="14" height="3" rx="1.5" fill="#001060"/>
+            <rect x="14.5" y="4" width="3" height="5" rx="1" fill="#4488FF"/>
+            <circle cx="16" cy="3.5" r="2.5" fill="#7AB0FF"/>
+            <rect x="3" y="12" width="3.5" height="8" rx="1.5" fill="#001560"/>
+            <rect x="25.5" y="12" width="3.5" height="8" rx="1.5" fill="#001560"/>
+          </svg>
           <span className="font-black tracking-tight text-lg dark:text-white whitespace-nowrap">XLS<span className="klein">Buddy</span></span>
         </Link>
 
