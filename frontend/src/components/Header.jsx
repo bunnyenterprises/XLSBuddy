@@ -33,17 +33,15 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white dark:bg-[#162038] dark:border-white/10 border-b border-foreground/15" data-testid="app-header">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group" data-testid="brand-link">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="32" height="32" rx="6" fill="#FAF6EE"/>
-            <polyline points="4,24 9,17 14,19 20,11 28,14"
-              fill="none" stroke="#2BAD9E" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-            <circle cx="4"  cy="24" r="2" fill="#2BAD9E"/>
-            <circle cx="9"  cy="17" r="2" fill="#2BAD9E"/>
-            <circle cx="14" cy="19" r="2" fill="#2BAD9E"/>
-            <circle cx="20" cy="11" r="2" fill="#2BAD9E"/>
-            <circle cx="28" cy="14" r="2" fill="#2BAD9E"/>
+          <svg width="36" height="28" viewBox="0 0 36 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Green X -->
+            <polygon points="0,0 5,0 9,8 13,0 18,0 13,14 18,28 13,28 9,20 5,28 0,28 5,14" fill="#1DAF47"/>
+            <!-- Navy B (right, overlapping) -->
+            <path d="M12,0 L12,28 L17,28 Q30,28 30,21 Q30,14 17,14 Q26,14 26,7 Q26,0 17,0 Z" fill="#0D1B3C"/>
           </svg>
-          <span className="font-black tracking-tight text-lg dark:text-white whitespace-nowrap">XLS<span className="klein">Buddy</span></span>
+          <span className="font-black tracking-tight text-lg whitespace-nowrap">
+            <span style={{color:"#1DAF47"}}>XLS</span><span className="dark:text-white" style={{color:"#0D1B3C"}}>Buddy</span>
+          </span>
         </Link>
 
         {user && (

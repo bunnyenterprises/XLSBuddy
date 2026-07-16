@@ -1,13 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Cream background -->
-  <rect width="32" height="32" rx="5" fill="#FAF6EE"/>
-  <!-- Chart line -->
-  <polyline points="4,24 9,17 14,19 20,11 28,14"
-    fill="none" stroke="#2BAD9E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Chart dots -->
-  <circle cx="4"  cy="24" r="2" fill="#2BAD9E"/>
-  <circle cx="9"  cy="17" r="2" fill="#2BAD9E"/>
-  <circle cx="14" cy="19" r="2" fill="#2BAD9E"/>
-  <circle cx="20" cy="11" r="2" fill="#2BAD9E"/>
-  <circle cx="28" cy="14" r="2" fill="#2BAD9E"/>
+  <!-- White background -->
+  <rect width="32" height="32" rx="5" fill="white"/>
+
+  <!-- Green X -->
+  <polygon
+    points="2,2 6,2 10,9 14,2 18,2 13,11 18,20 14,20 10,13 6,20 2,20 7,11"
+    fill="#1DAF47"/>
+
+  <!-- Navy B (right, overlapping X) -->
+  <path d="M13,2 L13,20 L17,20 Q27,20 27,15 Q27,11 17,11 Q24,11 24,6 Q24,2 17,2 Z" fill="#0D1B3C"/>
 </svg>
