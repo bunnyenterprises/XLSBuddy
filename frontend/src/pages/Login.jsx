@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowRight } from "@phosphor-icons/react";
@@ -9,7 +8,6 @@ import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 
 export default function Login() {
   const { login, googleLogin, user, loading: authLoading } = useAuth();
-  const { t } = useLanguage();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,10 +45,10 @@ export default function Login() {
         </Link>
         <div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-            {t("pickUpTitle")}
+            Pick up where you left off.
           </h1>
           <p className="mt-8 text-white/80 max-w-sm leading-relaxed">
-            {t("pickUpSubtitle")}
+            Your formulas, your progress — all waiting for you.
           </p>
         </div>
         <div className="text-white/30 text-xs">© XLSBuddy</div>
@@ -60,7 +58,7 @@ export default function Login() {
       <div className="hero-bg flex items-center justify-center p-6 lg:p-12 min-h-screen lg:min-h-0">
         <form onSubmit={submit} className="w-full max-w-md space-y-4" data-testid="login-form">
           <h2 className="text-2xl lg:text-3xl font-extrabold tracking-tight mb-4">
-            {t("signInToAccount")}
+            Sign in to your account
           </h2>
 
           <Input
@@ -68,7 +66,7 @@ export default function Login() {
             value={email} onChange={(e) => setEmail(e.target.value)}
             data-testid="login-email-input"
             className="rounded-none border-foreground/30 h-12 text-base"
-            placeholder={t("emailAddress")}
+            placeholder="Email address"
           />
 
           <div>
@@ -77,11 +75,11 @@ export default function Login() {
               value={password} onChange={(e) => setPassword(e.target.value)}
               data-testid="login-password-input"
               className="rounded-none border-foreground/30 h-12 text-base"
-              placeholder={t("password")}
+              placeholder="Password"
             />
             <div className="text-right mt-2">
               <Link to="/forgot-password" className="text-sm klein font-semibold hover:underline">
-                {t("forgotPassword")}
+                Forgot password?
               </Link>
             </div>
           </div>
@@ -97,7 +95,7 @@ export default function Login() {
             data-testid="login-submit-button"
             className="rounded-none w-full h-12 bg-klein hover:bg-[#002FA7]/90 text-white text-base font-bold"
           >
-            {loading ? t("signingIn") : (<>{t("signIn")} <ArrowRight size={18} className="ml-2" /></>)}
+            {loading ? "Signing in..." : (<>Sign in <ArrowRight size={18} className="ml-2" /></>)}
           </Button>
 
           <div className="flex items-center gap-3 my-1">
@@ -123,9 +121,9 @@ export default function Login() {
           />
 
           <div className="text-sm text-muted-foreground">
-            {t("newHere")}{" "}
+            New here?{" "}
             <Link to="/signup" className="klein font-bold" data-testid="login-to-signup">
-              {t("createAccountLink")}
+              Create an account
             </Link>
           </div>
         </form>

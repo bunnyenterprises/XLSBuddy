@@ -2,21 +2,19 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/context/AuthContext";
-import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { ChartLine, BookOpen, ChatCircleDots, MagnifyingGlass, BookmarkSimple, ArrowUpRight, Sparkle } from "@phosphor-icons/react";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const { t } = useLanguage();
 
   const tiles = [
-    { to: "/functions",           title: t("tileFnTitle"), desc: t("tileFnDesc"), icon: ChartLine },
-    { to: "/chat",                title: t("tileAiTitle"), desc: t("tileAiDesc"), icon: ChatCircleDots },
-    { to: "/tutorials",           title: t("tileTutTitle"), desc: t("tileTutDesc"), icon: BookOpen },
-    { to: "/bookmarks",           title: t("tileBmTitle"), desc: t("tileBmDesc"), icon: BookmarkSimple },
-    { to: "/formula-generator",   title: t("tileFgTitle"), desc: t("tileFgDesc"), icon: Sparkle },
-    { to: "/functions?focus=search", title: t("tileQsTitle"), desc: t("tileQsDesc"), icon: MagnifyingGlass },
+    { to: "/functions",           title: "Excel Functions",        desc: "Browse 60+ functions with examples and use cases.", icon: ChartLine },
+    { to: "/chat",                title: "AI Chat",                desc: "Ask anything about Excel and get instant answers.", icon: ChatCircleDots },
+    { to: "/tutorials",           title: "Tutorials",              desc: "Step-by-step guides for every skill level.", icon: BookOpen },
+    { to: "/bookmarks",           title: "Bookmarks",              desc: "Your saved functions for quick access.", icon: BookmarkSimple },
+    { to: "/formula-generator",   title: "Formula Generator",      desc: "Describe what you need and get a formula instantly.", icon: Sparkle },
+    { to: "/functions?focus=search", title: "Quick Search",        desc: "Find any Excel function instantly.", icon: MagnifyingGlass },
   ];
 
   return (
@@ -35,27 +33,27 @@ export default function Dashboard() {
             <div className="text-[180px] font-black leading-none select-none">XLS</div>
           </div>
           <div className="relative">
-            <p className="text-xs font-bold tracking-widest text-white/60 uppercase mb-3">{t("dashboardLabel")}</p>
+            <p className="text-xs font-bold tracking-widest text-white/60 uppercase mb-3">DASHBOARD</p>
             <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight mb-4">
-              {t("welcomeBack")}, {user?.name?.split(" ")[0] || "there"}.
+              Welcome back, {user?.name?.split(" ")[0] || "there"}.
             </h1>
             <p className="text-lg text-blue-100/80 max-w-2xl mb-6">
-              {t("dashHeroSub")}
+              Your Excel AI companion — formulas, tutorials, and smart assistance in one place.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to="/functions">
                 <Button className="rounded-full bg-white text-[#002FA7] hover:bg-white/90 h-11 px-6 font-bold shadow-lg">
-                  {t("browseFunctions")}
+                  Browse Functions
                 </Button>
               </Link>
               <Link to="/chat">
                 <Button variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 h-11 px-6">
-                  {t("askAI")}
+                  Ask AI
                 </Button>
               </Link>
               <Link to="/tutorials">
                 <Button variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 h-11 px-6">
-                  {t("tutorials")}
+                  Tutorials
                 </Button>
               </Link>
             </div>
@@ -65,10 +63,10 @@ export default function Dashboard() {
         {/* Stats row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {[
-            { k: "60+", v: t("statFunctions"), color: "text-indigo-600" },
-            { k: "12+", v: t("statTutorials"), color: "text-emerald-600" },
-            { k: "AI",  v: t("statAssistant"), color: "text-violet-600" },
-            { k: "24/7",v: t("statSupport"),   color: "text-blue-600" },
+            { k: "60+", v: "EXCEL FUNCTIONS", color: "text-indigo-600" },
+            { k: "12+", v: "TUTORIALS",        color: "text-emerald-600" },
+            { k: "AI",  v: "AI ASSISTANT",     color: "text-violet-600" },
+            { k: "24/7",v: "AVAILABILITY",     color: "text-blue-600" },
           ].map((s) => (
             <div key={s.v} className="rounded-2xl p-6 lg:p-8 bg-white dark:bg-[#1c2d4a] shadow-sm border border-white/60 dark:border-white/5">
               <div className={`text-4xl font-black tracking-tight ${s.color}`}>{s.k}</div>
@@ -78,8 +76,8 @@ export default function Dashboard() {
         </div>
 
         {/* Tools grid */}
-        <p className="text-xs font-bold tracking-widest text-indigo-500 uppercase mb-2">{t("toolsLabel")}</p>
-        <h2 className="text-2xl font-extrabold tracking-tight mb-6">{t("toolsHeading")}</h2>
+        <p className="text-xs font-bold tracking-widest text-indigo-500 uppercase mb-2">TOOLS</p>
+        <h2 className="text-2xl font-extrabold tracking-tight mb-6">Everything you need</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tiles.map((tile, i) => {
             const Icon = tile.icon;
@@ -108,24 +106,24 @@ export default function Dashboard() {
           <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-8 lg:p-10">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-[10px] font-bold tracking-widest text-emerald-300 uppercase">{t("proTipLabel")}</span>
+                <span className="text-[10px] font-bold tracking-widest text-emerald-300 uppercase">PRO TIP</span>
               </div>
               <h3 className="text-xl lg:text-2xl font-extrabold text-white tracking-tight mb-1">
-                {t("proTipTitle")}
+                Unlock Advanced Features
               </h3>
               <p className="text-emerald-100/80 text-sm max-w-lg">
-                {t("proTipDesc")}
+                Get unlimited AI chat, formula generation, and priority support with Pro.
               </p>
             </div>
             <div className="flex gap-3 shrink-0">
               <Link to="/pricing">
                 <Button className="rounded-full bg-white text-[#1D6F42] hover:bg-white/90 font-bold px-6 shadow-lg">
-                  {t("upgradeToPro")}
+                  Upgrade to Pro
                 </Button>
               </Link>
               <a href="https://wa.me/?text=Check%20out%20XLSBuddy%20-%20the%20best%20Excel%20formula%20helper!%20https://xlsbuddy.vercel.app" target="_blank" rel="noopener noreferrer">
                 <Button variant="outline" className="rounded-full border-white/40 text-white hover:bg-white/10 px-6">
-                  {t("shareApp")}
+                  Share App
                 </Button>
               </a>
             </div>

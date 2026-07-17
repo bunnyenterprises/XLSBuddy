@@ -83,28 +83,6 @@ AUTH_COOKIE_DOMAIN = os.environ.get('AUTH_COOKIE_DOMAIN') or None
 AUTH_COOKIE_PATH = os.environ.get('AUTH_COOKIE_PATH', '/')
 AUTH_COOKIE_MAX_AGE = int(os.environ.get('AUTH_COOKIE_MAX_AGE', str(60 * 120)))
 
-LANGUAGE_NAMES = {
-    "hi": "Hindi (हिंदी)",
-    "ta": "Tamil (தமிழ்)",
-    "te": "Telugu (తెలుగు)",
-    "mr": "Marathi (मराठी)",
-    "gu": "Gujarati (ગુજરાતી)",
-    "kn": "Kannada (ಕನ್ನಡ)",
-    "ml": "Malayalam (മലയാളം)",
-    "bn": "Bengali (বাংলা)",
-    "pa": "Punjabi (ਪੰਜਾਬੀ)",
-}
-
-def _lang_instruction(request: Request) -> str:
-    lang = request.headers.get("X-Language", "en")
-    name = LANGUAGE_NAMES.get(lang)
-    if not name:
-        return ""
-    return (
-        f"\n\nIMPORTANT: Respond entirely in {name}. "
-        "Use English only for Excel formula syntax (e.g. =VLOOKUP, =IF) since Excel formulas are universal."
-    )
-
 
 SYSTEM_PROMPT = """You are XLSBUDDY AI, an expert Excel assistant. You help users with:
 - Excel formulas and functions (syntax, examples, troubleshooting)
@@ -567,7 +545,7 @@ async def chat_usage(user_id: str = Depends(get_current_user_id)):
 
 
 @api_router.post("/chat/message")
-async def send_message(req: ChatMessageRequest, request: Request, user_id: str = Depends(get_current_user_id)):
+async def send_message(req: ChatMessageRequest, user_id: str = Depends(get_current_user_id)):
     from groq import AsyncGroq
 
     if not GROQ_API_KEY:
@@ -602,7 +580,7 @@ async def send_message(req: ChatMessageRequest, request: Request, user_id: str =
     await db.chat_messages.insert_one(user_msg.copy())
 
     history = await db.chat_messages.find({"session_id": session_id}, {"_id": 0}).sort("created_at", 1).to_list(40)
-    messages = [{"role": "system", "content": SYSTEM_PROMPT + _lang_instruction(request)}] + [
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}] + [
         {"role": m["role"], "content": m["content"]} for m in history
     ]
 
@@ -627,7 +605,7 @@ async def send_message(req: ChatMessageRequest, request: Request, user_id: str =
 
 # ============= EXCEL ANALYZER =============
 @api_router.post("/excel/analyze")
-async def excel_analyze(req: ExcelAnalyzeRequest, request: Request, user_id: str = Depends(get_current_user_id)):
+async def excel_analyze(req: ExcelAnalyzeRequest, user_id: str = Depends(get_current_user_id)):
     from groq import AsyncGroq
 
     if not GROQ_API_KEY:
@@ -643,7 +621,7 @@ Rules:
 - If asked for formulas, provide Excel formulas using the column names shown
 - If asked for totals/averages/counts, calculate from the data rows
 - Keep answers concise and actionable
-- If only the first 60 rows were provided, mention that when relevant""" + _lang_instruction(request)
+- If only the first 60 rows were provided, mention that when relevant"""
 
     try:
         groq_client = AsyncGroq(api_key=GROQ_API_KEY)
@@ -1108,7 +1086,7 @@ async def get_hint(lesson_id: str, user_id: str = Depends(get_current_user_id)):
 
 
 @api_router.post("/coach/chat")
-async def coach_chat(req: CoachChatRequest, request: Request, user_id: str = Depends(get_current_user_id)):
+async def coach_chat(req: CoachChatRequest, user_id: str = Depends(get_current_user_id)):
     from groq import AsyncGroq
     from bson import ObjectId
 
@@ -1139,7 +1117,7 @@ Exercise: {lesson.get('exercise', {}).get('question', '')}
 - Encourage the user — they're learning something valuable
 
 {lesson_context}
-Always keep answers focused on Excel. If asked something unrelated, gently redirect to Excel.""" + _lang_instruction(request)
+Always keep answers focused on Excel. If asked something unrelated, gently redirect to Excel."""
 
     try:
         groq_client = AsyncGroq(api_key=GROQ_API_KEY)
