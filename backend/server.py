@@ -779,6 +779,376 @@ Return ONLY valid JSON — no markdown, no explanation, nothing else.
         raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
 
 
+# ============= LEARNING PLATFORM =============
+class CheckAnswerRequest(BaseModel):
+    answer: str
+
+class CoachChatRequest(BaseModel):
+    message: str
+    lesson_id: Optional[str] = None
+
+
+def _xp_to_level(xp: int) -> dict:
+    thresholds = [
+        (2500, "Excel Expert", "🎯"),
+        (1200, "Advanced", "🏆"),
+        (500,  "Intermediate", "⚡"),
+        (150,  "Learner", "📊"),
+        (0,    "Beginner", "🌱"),
+    ]
+    for min_xp, name, emoji in thresholds:
+        if xp >= min_xp:
+            return {"name": name, "emoji": emoji, "xp": xp}
+    return {"name": "Beginner", "emoji": "🌱", "xp": xp}
+
+
+def _serialize(doc: dict) -> dict:
+    """Convert ObjectId _id to string id."""
+    if doc and "_id" in doc:
+        doc["id"] = str(doc.pop("_id"))
+    return doc
+
+
+@api_router.get("/learn/paths")
+async def get_paths(user_id: str = Depends(get_current_user_id)):
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    completed_ids = set(user.get("completed_lesson_ids", []))
+    is_pro = bool(user.get("is_pro"))
+
+    paths = await db.learning_paths.find({}).sort("order", 1).to_list(20)
+    result = []
+    for p in paths:
+        total = p.get("total_lessons", 0)
+        if total > 0:
+            lessons = await db.lessons.find(
+                {"path_slug": p["slug"]}, {"_id": 1}
+            ).to_list(200)
+            lesson_ids = [str(l["_id"]) for l in lessons]
+            completed = sum(1 for lid in lesson_ids if lid in completed_ids)
+        else:
+            completed = 0
+            lesson_ids = []
+
+        next_lesson = None
+        if completed < total and lesson_ids:
+            for lid in lesson_ids:
+                if lid not in completed_ids:
+                    next_lesson = lid
+                    break
+
+        result.append({
+            "id": str(p["_id"]),
+            "slug": p["slug"],
+            "title": p["title"],
+            "description": p["description"],
+            "level": p["level"],
+            "emoji": p.get("emoji", "📗"),
+            "is_pro": p.get("is_pro", False),
+            "locked": p.get("is_pro", False) and not is_pro,
+            "total_xp": p.get("total_xp", 0),
+            "estimated_hours": p.get("estimated_hours", 0),
+            "total_lessons": total,
+            "completed_lessons": completed,
+            "progress_pct": round(completed / total * 100) if total > 0 else 0,
+            "next_lesson_id": next_lesson,
+        })
+    return {"paths": result}
+
+
+@api_router.get("/learn/paths/{slug}")
+async def get_path_detail(slug: str, user_id: str = Depends(get_current_user_id)):
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    path = await db.learning_paths.find_one({"slug": slug})
+    if not path:
+        raise HTTPException(status_code=404, detail="Path not found")
+
+    if path.get("is_pro") and not user.get("is_pro"):
+        raise HTTPException(status_code=403, detail="This path requires a Pro subscription.")
+
+    completed_ids = set(user.get("completed_lesson_ids", []))
+    modules = await db.modules.find({"path_slug": slug}).sort("order", 1).to_list(20)
+
+    modules_out = []
+    for mod in modules:
+        lessons = await db.lessons.find(
+            {"module_slug": mod["slug"], "path_slug": slug},
+            {"_id": 1, "title": 1, "order": 1, "xp_value": 1, "estimated_minutes": 1}
+        ).sort("order", 1).to_list(20)
+
+        lessons_out = []
+        for l in lessons:
+            lid = str(l["_id"])
+            lessons_out.append({
+                "id": lid,
+                "title": l["title"],
+                "order": l["order"],
+                "xp_value": l.get("xp_value", 10),
+                "estimated_minutes": l.get("estimated_minutes", 5),
+                "completed": lid in completed_ids,
+            })
+
+        modules_out.append({
+            "id": str(mod["_id"]),
+            "slug": mod["slug"],
+            "title": mod["title"],
+            "order": mod["order"],
+            "description": mod.get("description", ""),
+            "lessons": lessons_out,
+        })
+
+    return {
+        "id": str(path["_id"]),
+        "slug": path["slug"],
+        "title": path["title"],
+        "description": path["description"],
+        "level": path["level"],
+        "emoji": path.get("emoji", "📗"),
+        "is_pro": path.get("is_pro", False),
+        "modules": modules_out,
+    }
+
+
+@api_router.get("/learn/lessons/{lesson_id}")
+async def get_lesson(lesson_id: str, user_id: str = Depends(get_current_user_id)):
+    from bson import ObjectId
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    try:
+        oid = ObjectId(lesson_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid lesson ID")
+
+    lesson = await db.lessons.find_one({"_id": oid})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    if lesson.get("is_pro") and not user.get("is_pro"):
+        raise HTTPException(status_code=403, detail="This lesson requires a Pro subscription.")
+
+    completed_ids = set(user.get("completed_lesson_ids", []))
+
+    # Find prev/next lessons in same module
+    siblings = await db.lessons.find(
+        {"module_slug": lesson["module_slug"], "path_slug": lesson["path_slug"]},
+        {"_id": 1, "title": 1, "order": 1}
+    ).sort("order", 1).to_list(20)
+
+    prev_id = next_id = None
+    for i, s in enumerate(siblings):
+        if str(s["_id"]) == lesson_id:
+            if i > 0:
+                prev_id = str(siblings[i - 1]["_id"])
+            if i < len(siblings) - 1:
+                next_id = str(siblings[i + 1]["_id"])
+
+    exercise = lesson.get("exercise", {})
+    safe_exercise = {k: v for k, v in exercise.items() if k != "answer"}
+
+    return {
+        "id": lesson_id,
+        "title": lesson["title"],
+        "path_slug": lesson["path_slug"],
+        "module_slug": lesson["module_slug"],
+        "order": lesson["order"],
+        "content": lesson.get("content", ""),
+        "xp_value": lesson.get("xp_value", 10),
+        "estimated_minutes": lesson.get("estimated_minutes", 5),
+        "exercise": safe_exercise,
+        "completed": lesson_id in completed_ids,
+        "prev_lesson_id": prev_id,
+        "next_lesson_id": next_id,
+    }
+
+
+@api_router.post("/learn/lessons/{lesson_id}/check")
+async def check_answer(lesson_id: str, req: CheckAnswerRequest, user_id: str = Depends(get_current_user_id)):
+    from bson import ObjectId
+    try:
+        oid = ObjectId(lesson_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid lesson ID")
+
+    lesson = await db.lessons.find_one({"_id": oid})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    exercise = lesson.get("exercise", {})
+    correct_answer = exercise.get("answer", "").strip().lower().replace(" ", "")
+    user_answer = req.answer.strip().lower().replace(" ", "")
+
+    is_correct = user_answer == correct_answer
+
+    return {
+        "correct": is_correct,
+        "explanation": exercise.get("explanation", ""),
+        "correct_answer": exercise.get("answer") if not is_correct else None,
+    }
+
+
+@api_router.post("/learn/lessons/{lesson_id}/complete")
+async def complete_lesson(lesson_id: str, user_id: str = Depends(get_current_user_id)):
+    from bson import ObjectId
+    try:
+        oid = ObjectId(lesson_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid lesson ID")
+
+    lesson = await db.lessons.find_one({"_id": oid})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    user = await db.users.find_one({"id": user_id})
+    completed_ids = user.get("completed_lesson_ids", [])
+
+    if lesson_id in completed_ids:
+        return {"already_completed": True, "xp": user.get("xp", 0)}
+
+    xp_earned = lesson.get("xp_value", 10)
+    new_xp = user.get("xp", 0) + xp_earned
+
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    last_active = user.get("last_active_date", "")
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+
+    if last_active == today:
+        streak = user.get("streak", 0)
+    elif last_active == yesterday:
+        streak = user.get("streak", 0) + 1
+    else:
+        streak = 1
+
+    await db.users.update_one(
+        {"id": user_id},
+        {"$addToSet": {"completed_lesson_ids": lesson_id},
+         "$set": {"xp": new_xp, "streak": streak, "last_active_date": today}},
+    )
+
+    await db.user_progress.update_one(
+        {"user_id": user_id, "lesson_id": lesson_id},
+        {"$set": {
+            "user_id": user_id,
+            "lesson_id": lesson_id,
+            "path_slug": lesson["path_slug"],
+            "status": "completed",
+            "completed_at": datetime.now(timezone.utc).isoformat(),
+        }},
+        upsert=True,
+    )
+
+    return {
+        "xp_earned": xp_earned,
+        "total_xp": new_xp,
+        "streak": streak,
+        "level": _xp_to_level(new_xp),
+    }
+
+
+@api_router.post("/learn/lessons/{lesson_id}/hint")
+async def get_hint(lesson_id: str, user_id: str = Depends(get_current_user_id)):
+    from bson import ObjectId
+    try:
+        oid = ObjectId(lesson_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid lesson ID")
+
+    lesson = await db.lessons.find_one({"_id": oid})
+    if not lesson:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+
+    hints = lesson.get("exercise", {}).get("hints", [])
+
+    hint_key = f"hint_count_{lesson_id}"
+    user = await db.users.find_one({"id": user_id})
+    hint_counts = user.get("hint_counts", {})
+    used = hint_counts.get(lesson_id, 0)
+
+    if used >= len(hints):
+        return {"hint": None, "hint_index": used, "total_hints": len(hints)}
+
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {f"hint_counts.{lesson_id}": used + 1}}
+    )
+
+    return {
+        "hint": hints[used],
+        "hint_index": used + 1,
+        "total_hints": len(hints),
+    }
+
+
+@api_router.post("/coach/chat")
+async def coach_chat(req: CoachChatRequest, user_id: str = Depends(get_current_user_id)):
+    from groq import AsyncGroq
+    from bson import ObjectId
+
+    if not GROQ_API_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured.")
+
+    lesson_context = ""
+    if req.lesson_id:
+        try:
+            lesson = await db.lessons.find_one({"_id": ObjectId(req.lesson_id)})
+            if lesson:
+                lesson_context = f"""
+You are currently helping with this lesson:
+Title: {lesson['title']}
+Content summary:
+{lesson.get('content', '')[:1200]}
+
+Exercise: {lesson.get('exercise', {}).get('question', '')}
+"""
+        except Exception:
+            pass
+
+    system = f"""You are XLSBuddy AI Coach — a friendly, encouraging Excel tutor. Your job is to:
+- Help users understand Excel concepts clearly
+- Give short, practical answers (3-5 sentences max)
+- Use simple examples with real data (names, cities, numbers they can relate to)
+- When showing formulas, use proper Excel syntax in backticks
+- Encourage the user — they're learning something valuable
+
+{lesson_context}
+Always keep answers focused on Excel. If asked something unrelated, gently redirect to Excel."""
+
+    try:
+        groq_client = AsyncGroq(api_key=GROQ_API_KEY)
+        completion = await groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": req.message},
+            ],
+            max_tokens=600,
+        )
+        return {"reply": completion.choices[0].message.content}
+    except Exception as e:
+        logging.exception("Coach chat error")
+        raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
+
+
+@api_router.get("/learn/progress")
+async def get_progress(user_id: str = Depends(get_current_user_id)):
+    user = await db.users.find_one({"id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    xp = user.get("xp", 0)
+    return {
+        "xp": xp,
+        "level": _xp_to_level(xp),
+        "streak": user.get("streak", 0),
+        "completed_lessons": len(user.get("completed_lesson_ids", [])),
+        "last_active_date": user.get("last_active_date"),
+    }
+
+
 # ============= ROOT =============
 @api_router.get("/")
 async def root():
@@ -838,6 +1208,9 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("startup")
 async def seed_db():
+    from curriculum import seed_curriculum
+    await seed_curriculum(db)
+
     if ADMIN_PASSWORD:
         admin = await db.users.find_one({"email": ADMIN_EMAIL})
         if not admin:

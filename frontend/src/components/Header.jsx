@@ -10,6 +10,7 @@ import {
 import {
   GridFour, ChartLine, BookOpen, ChatCircleDots, SignOut, User as UserIcon,
   List, X, Crown, Star, Tag, Shield, BookmarkSimple, Moon, Sun, Sparkle, FileXls,
+  GraduationCap,
 } from "@phosphor-icons/react";
 
 export const Header = () => {
@@ -21,8 +22,8 @@ export const Header = () => {
 
   const navItems = [
     { to: "/dashboard", label: "Dashboard", icon: GridFour },
+    { to: "/learn", label: "Learn", icon: GraduationCap },
     { to: "/functions", label: "Functions", icon: ChartLine },
-    { to: "/tutorials", label: "Tutorials", icon: BookOpen },
     { to: "/chat", label: "AI Chat", icon: ChatCircleDots },
     { to: "/formula-generator", label: "Formula AI", icon: Sparkle },
     { to: "/excel-analyzer", label: "Excel AI", icon: FileXls },

@@ -25,6 +25,9 @@ import ResetPassword from "@/pages/ResetPassword";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import Terms from "@/pages/Terms";
 import ExcelAnalyzer from "@/pages/ExcelAnalyzer";
+import Learn from "@/pages/Learn";
+import PathView from "@/pages/PathView";
+import LessonView from "@/pages/LessonView";
 
 const HomeGuard = () => {
   const { user, loading } = useAuth();
@@ -56,6 +59,9 @@ function App() {
               <Route path="/bookmarks" element={<ProtectedRoute><Bookmarks /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
               <Route path="/excel-analyzer" element={<ProtectedRoute><ExcelAnalyzer /></ProtectedRoute>} />
+              <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+              <Route path="/learn/:pathSlug" element={<ProtectedRoute><PathView /></ProtectedRoute>} />
+              <Route path="/lesson/:lessonId" element={<ProtectedRoute><LessonView /></ProtectedRoute>} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="*" element={<Navigate to="/" replace />} />
