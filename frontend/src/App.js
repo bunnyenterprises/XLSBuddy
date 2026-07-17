@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 import Landing from "@/pages/Landing";
@@ -39,6 +40,7 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider>
+        <LanguageProvider>
         <AuthProvider>
           <BrowserRouter>
             <Routes>
@@ -69,6 +71,7 @@ function App() {
             <Toaster richColors position="top-right" />
           </BrowserRouter>
         </AuthProvider>
+        </LanguageProvider>
       </ThemeProvider>
     </div>
   );

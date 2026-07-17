@@ -10,6 +10,12 @@ export const api = axios.create({
   headers: { "X-Requested-With": "XLSBuddy" },
 });
 
+api.interceptors.request.use((config) => {
+  const lang = localStorage.getItem("xlsbuddy_lang");
+  if (lang && lang !== "en") config.headers["X-Language"] = lang;
+  return config;
+});
+
 api.interceptors.response.use(
   (r) => r,
   (err) => {

@@ -12,6 +12,7 @@ import {
   List, X, Crown, Star, Tag, Shield, BookmarkSimple, Moon, Sun, Sparkle, FileXls,
   GraduationCap,
 } from "@phosphor-icons/react";
+import LanguageSelector from "@/components/LanguageSelector";
 
 export const Header = () => {
   const { user, logout } = useAuth();
@@ -62,6 +63,8 @@ export const Header = () => {
         )}
 
         <div className="flex items-center gap-2">
+          <LanguageSelector />
+
           {/* Dark mode toggle */}
           <button
             onClick={toggle}
