@@ -2,8 +2,9 @@ import { useState, useRef, useEffect } from "react";
 import { Globe, Check } from "@phosphor-icons/react";
 import { useLanguage } from "@/context/LanguageContext";
 
+
 export default function LanguageSelector() {
-  const { language, setLanguage, current, LANGUAGES } = useLanguage();
+  const { language, setLanguage, current, LANGUAGES, t } = useLanguage();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -30,7 +31,7 @@ export default function LanguageSelector() {
         <div className="absolute right-0 top-full mt-1 w-52 bg-white dark:bg-[#1c2640] border border-gray-200 dark:border-gray-700 shadow-xl z-50 py-1 max-h-80 overflow-y-auto">
           <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-700">
             <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-              AI responds in
+              {t("aiRespondingIn")}
             </p>
           </div>
           {LANGUAGES.map((lang) => {

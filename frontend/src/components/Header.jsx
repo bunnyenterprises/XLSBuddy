@@ -2,13 +2,14 @@ import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  GridFour, ChartLine, BookOpen, ChatCircleDots, SignOut, User as UserIcon,
+  GridFour, ChartLine, ChatCircleDots, SignOut, User as UserIcon,
   List, X, Crown, Star, Tag, Shield, BookmarkSimple, Moon, Sun, Sparkle, FileXls,
   GraduationCap,
 } from "@phosphor-icons/react";
@@ -17,18 +18,19 @@ import LanguageSelector from "@/components/LanguageSelector";
 export const Header = () => {
   const { user, logout } = useAuth();
   const { dark, toggle } = useTheme();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
 
   const navItems = [
-    { to: "/dashboard", label: "Dashboard", icon: GridFour },
-    { to: "/learn", label: "Learn", icon: GraduationCap },
-    { to: "/functions", label: "Functions", icon: ChartLine },
-    { to: "/chat", label: "AI Chat", icon: ChatCircleDots },
-    { to: "/formula-generator", label: "Formula AI", icon: Sparkle },
-    { to: "/excel-analyzer", label: "Excel AI", icon: FileXls },
-    { to: "/pricing", label: "Pricing", icon: Tag },
+    { to: "/dashboard",        label: t("dashboard"),  icon: GridFour },
+    { to: "/learn",            label: t("learn"),      icon: GraduationCap },
+    { to: "/functions",        label: t("functions"),  icon: ChartLine },
+    { to: "/chat",             label: t("aiChat"),     icon: ChatCircleDots },
+    { to: "/formula-generator",label: t("formulaAI"), icon: Sparkle },
+    { to: "/excel-analyzer",   label: t("excelAI"),   icon: FileXls },
+    { to: "/pricing",          label: t("pricing"),   icon: Tag },
   ];
 
   return (
@@ -49,7 +51,7 @@ export const Header = () => {
                 <Link
                   key={to}
                   to={to}
-                  data-testid={`nav-${label.toLowerCase().replace(' ', '-')}`}
+                  data-testid={`nav-${to.replace('/', '').replace('-', '')}`}
                   className={`flex items-center gap-2 px-3 py-2 text-sm font-medium border ${
                     active ? "bg-klein text-white border-klein" : "border-transparent hover:border-foreground/20 dark:text-gray-300 dark:hover:border-white/20"
                   }`}
@@ -65,7 +67,6 @@ export const Header = () => {
         <div className="flex items-center gap-2">
           <LanguageSelector />
 
-          {/* Dark mode toggle */}
           <button
             onClick={toggle}
             title={dark ? "Switch to light mode" : "Switch to dark mode"}
@@ -80,7 +81,7 @@ export const Header = () => {
               {!user.is_pro && (
                 <Link to="/pricing" className="hidden sm:inline-flex" data-testid="header-upgrade-cta">
                   <Button size="sm" className="rounded-none bg-klein hover:bg-[#002FA7]/90 text-white h-9">
-                    <Crown size={14} weight="fill" className="mr-1.5" /> Upgrade
+                    <Crown size={14} weight="fill" className="mr-1.5" /> {t("upgrade")}
                   </Button>
                 </Link>
               )}
@@ -94,38 +95,40 @@ export const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="rounded-none w-56">
                   <DropdownMenuLabel className="font-normal">
-                    <div className="text-xs text-muted-foreground">Signed in as</div>
+                    <div className="text-xs text-muted-foreground">{t("signedInAs")}</div>
                     <div className="font-bold truncate">{user.email}</div>
                     <div className="text-xs mt-1">
-                      {user.is_pro ? <span className="klein font-bold">PRO</span> : <span className="text-muted-foreground">FREE</span>}
+                      {user.is_pro
+                        ? <span className="klein font-bold">{t("pro")}</span>
+                        : <span className="text-muted-foreground">{t("free")}</span>}
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate("/dashboard")} data-testid="menu-dashboard">
-                    <GridFour size={14} className="mr-2" /> Dashboard
+                    <GridFour size={14} className="mr-2" /> {t("dashboard")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/bookmarks")} data-testid="menu-bookmarks">
-                    <BookmarkSimple size={14} className="mr-2" /> Bookmarks
+                    <BookmarkSimple size={14} className="mr-2" /> {t("bookmarks")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/reviews")} data-testid="menu-reviews">
-                    <Star size={14} className="mr-2" /> Reviews
+                    <Star size={14} className="mr-2" /> {t("reviews")}
                   </DropdownMenuItem>
                   {!user.is_pro && (
                     <DropdownMenuItem onClick={() => navigate("/pricing")} data-testid="menu-upgrade">
-                      <Crown size={14} className="mr-2 klein" /> Upgrade to Pro
+                      <Crown size={14} className="mr-2 klein" /> {t("upgradeToProMenu")}
                     </DropdownMenuItem>
                   )}
                   {user.is_admin && (
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => navigate("/admin")} data-testid="menu-admin">
-                        <Shield size={14} className="mr-2 klein" weight="fill" /> Admin Console
+                        <Shield size={14} className="mr-2 klein" weight="fill" /> {t("admin")}
                       </DropdownMenuItem>
                     </>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => { logout(); navigate("/"); }} data-testid="menu-logout">
-                    <SignOut size={14} className="mr-2" /> Sign out
+                    <SignOut size={14} className="mr-2" /> {t("signOut")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -133,13 +136,13 @@ export const Header = () => {
           ) : (
             <>
               <Link to="/pricing" data-testid="header-pricing-link" className="hidden sm:inline-flex">
-                <Button variant="ghost" className="rounded-none dark:text-white">Pricing</Button>
+                <Button variant="ghost" className="rounded-none dark:text-white">{t("pricing")}</Button>
               </Link>
               <Link to="/login" data-testid="header-login-link">
-                <Button variant="ghost" className="rounded-none dark:text-white">Sign in</Button>
+                <Button variant="ghost" className="rounded-none dark:text-white">{t("signIn")}</Button>
               </Link>
               <Link to="/signup" data-testid="header-signup-link">
-                <Button className="rounded-none bg-klein hover:bg-[#002FA7]/90 text-white">Get Started</Button>
+                <Button className="rounded-none bg-klein hover:bg-[#002FA7]/90 text-white">{t("getStarted")}</Button>
               </Link>
             </>
           )}
@@ -165,14 +168,14 @@ export const Header = () => {
             </Link>
           ))}
           <Link to="/bookmarks" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium border border-transparent hover:border-foreground/20 dark:text-gray-300">
-            <BookmarkSimple size={16} /> Bookmarks
+            <BookmarkSimple size={16} /> {t("bookmarks")}
           </Link>
           <Link to="/reviews" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium border border-transparent hover:border-foreground/20 dark:text-gray-300">
-            <Star size={16} /> Reviews
+            <Star size={16} /> {t("reviews")}
           </Link>
           {user.is_admin && (
             <Link to="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-3 py-2 text-sm font-medium border border-transparent hover:border-foreground/20 dark:text-gray-300">
-              <Shield size={16} weight="fill" className="klein" /> Admin
+              <Shield size={16} weight="fill" className="klein" /> {t("admin")}
             </Link>
           )}
         </div>
