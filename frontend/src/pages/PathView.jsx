@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle, Lock, BookOpen, Lightning, Clock, CaretDown, ArrowRight } from "@phosphor-icons/react";
 import api from "@/lib/api";
+import { Header } from "@/components/Header";
 
 function LessonRow({ lesson, pathSlug }) {
   const isLocked = false; // future: sequential locking
@@ -153,6 +154,7 @@ export default function PathView() {
 
   return (
     <div className="min-h-screen page-bg">
+      <Header />
       <div className="max-w-3xl mx-auto px-4 py-8">
 
         {/* Back */}

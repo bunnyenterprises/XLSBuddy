@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react";
 import api from "@/lib/api";
 import AICoach from "@/components/AICoach";
+import { Header } from "@/components/Header";
 
 // ── Markdown-to-JSX renderer (no external dep) ─────────────────────────
 function LessonContent({ content }) {
@@ -405,6 +406,7 @@ export default function LessonView() {
 
   return (
     <div className="min-h-screen page-bg">
+      <Header />
       {xpToast && <XPToast xp={xpToast} onDone={() => setXpToast(null)} />}
 
       {/* Top bar */}
