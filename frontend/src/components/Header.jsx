@@ -37,7 +37,7 @@ export const Header = () => {
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group" data-testid="brand-link">
           <XLSBuddyIcon size={36} />
           <span className="font-black tracking-tight text-lg whitespace-nowrap">
-            <span className="text-gray-900 dark:text-white">XLS</span><span className="text-[#16a34a]">Buddy</span>
+            <span className="text-gray-900 dark:text-white">XLS</span><span className="text-[#3b82f6]">Buddy</span>
           </span>
         </Link>
 

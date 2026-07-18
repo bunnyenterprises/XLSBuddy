@@ -40,7 +40,7 @@ export default function Login() {
       <div className="bg-klein text-white p-12 lg:p-16 hidden lg:flex flex-col justify-between">
         <Link to="/" className="flex items-center gap-2 no-underline" data-testid="login-brand">
           <XLSBuddyIcon size={34} />
-          <span className="font-black tracking-tight whitespace-nowrap text-white">XLS<span className="text-[#4ade80]">Buddy</span></span>
+          <span className="font-black tracking-tight whitespace-nowrap text-white">XLS<span className="text-[#93c5fd]">Buddy</span></span>
         </Link>
         <div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
