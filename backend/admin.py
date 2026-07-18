@@ -277,12 +277,28 @@ def build_admin_router(db: AsyncIOMotorDatabase) -> APIRouter:
         )
         return {"ok": True, "is_pro": True}
 
-    @router.post("/payments/cancel")
-    async def cancel_pro(user_id: str = Depends(get_current_user_id)):
+    @router.post("/payments/start-trial")
+    async def start_trial(user_id: str = Depends(get_current_user_id)):
+        from datetime import timedelta
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if user.get("trial_started_at"):
+            raise HTTPException(status_code=400, detail="Trial already used")
+        if user.get("is_pro"):
+            raise HTTPException(status_code=400, detail="Already on Pro")
+        now = datetime.now(timezone.utc)
+        expires = now + timedelta(days=7)
         await db.users.update_one(
             {"id": user_id},
-            {"$set": {"is_pro": False, "pro_cancelled_at": datetime.now(timezone.utc).isoformat()}}
+            {"$set": {
+                "is_pro": True,
+                "is_trial": True,
+                "trial_started_at": now.isoformat(),
+                "trial_expires_at": expires.isoformat(),
+                "pro_since": now.isoformat(),
+            }}
         )
-        return {"ok": True, "is_pro": False}
+        return {"ok": True, "is_trial": True, "trial_expires_at": expires.isoformat()}
 
     return router

@@ -51,6 +51,11 @@ class ExcelAnalyzeRequest(BaseModel):
     question: str
     context: str
 
+class ExcelEditRequest(BaseModel):
+    instruction: str
+    csv_data: str  # full sheet as CSV (all rows)
+    sheet_name: str = "Sheet1"
+
 class CreateSessionRequest(BaseModel):
     title: Optional[str] = "New Conversation"
 
@@ -126,12 +131,25 @@ async def get_optional_user(request: Request) -> Optional[dict]:
 
 # ============= AUTH =============
 def public_user(user: dict) -> dict:
+    from datetime import timedelta
+    trial_expires = user.get("trial_expires_at")
+    trial_active = False
+    if trial_expires and user.get("is_trial"):
+        try:
+            exp = datetime.fromisoformat(trial_expires.replace("Z", "+00:00"))
+            trial_active = exp > datetime.now(timezone.utc)
+        except Exception:
+            pass
+    is_pro = bool(user.get("is_pro")) and (not user.get("is_trial") or trial_active)
     return {
         "id": user["id"],
         "email": user["email"],
         "name": user["name"],
         "is_admin": bool(user.get("is_admin")),
-        "is_pro": bool(user.get("is_pro")),
+        "is_pro": is_pro,
+        "is_trial": trial_active,
+        "trial_expires_at": trial_expires if trial_active else None,
+        "trial_started_at": user.get("trial_started_at"),
         "pro_since": user.get("pro_since"),
     }
 
@@ -637,6 +655,68 @@ Rules:
     except Exception as e:
         logging.exception("Groq API error in excel analyze")
         raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
+
+
+# ============= EXCEL EDITOR =============
+@api_router.post("/excel/edit")
+async def excel_edit(req: ExcelEditRequest, user_id: str = Depends(get_current_user_id)):
+    import json, re
+    from groq import AsyncGroq
+
+    if not GROQ_API_KEY:
+        raise HTTPException(status_code=503, detail="AI service not configured.")
+
+    system = f"""You are an Excel data editing AI. The user will give you a spreadsheet (as CSV) and ask you to make a specific change.
+
+CURRENT SPREADSHEET DATA (CSV format):
+{req.csv_data}
+
+Your job:
+1. Apply the requested change to the data
+2. Return the COMPLETE modified table as CSV (including the header row)
+3. Then explain what you changed in plain English
+
+You MUST respond in this exact format — no extra text before or after:
+<csv>
+[full modified CSV with header row first]
+</csv>
+<explanation>
+[1-2 sentences explaining what you changed]
+</explanation>
+
+Rules:
+- Always include ALL rows in the CSV output (not just changed ones)
+- Keep existing columns unless asked to remove them
+- For new columns, add them at the end
+- For sorting, reorder ALL data rows (keep header first)
+- If a change is impossible or unclear, still return the original CSV unchanged and explain why in the explanation"""
+
+    try:
+        groq_client = AsyncGroq(api_key=GROQ_API_KEY)
+        completion = await groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": req.instruction},
+            ],
+            max_tokens=4096,
+        )
+        ai_text = completion.choices[0].message.content or ""
+    except Exception as e:
+        logging.exception("Groq API error in excel edit")
+        raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
+
+    # Parse <csv> and <explanation> tags
+    csv_match = re.search(r"<csv>\s*(.*?)\s*</csv>", ai_text, re.DOTALL)
+    explanation_match = re.search(r"<explanation>\s*(.*?)\s*</explanation>", ai_text, re.DOTALL)
+
+    if not csv_match:
+        raise HTTPException(status_code=500, detail="AI did not return modified data. Please try again.")
+
+    modified_csv = csv_match.group(1).strip()
+    explanation = explanation_match.group(1).strip() if explanation_match else "Changes applied."
+
+    return {"modified_csv": modified_csv, "explanation": explanation}
 
 
 # ============= FORMULA GENERATOR =============
