@@ -260,15 +260,16 @@ function FormulaInput({ exercise, onCorrect }) {
 // ── Exercise: Multiple Choice ──────────────────────────────────────────
 function MultipleChoice({ exercise, onCorrect }) {
   const [selected, setSelected] = useState(null);
+  const [checking, setChecking] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const lessonId = useParams().lessonId;
   const [explanation, setExplanation] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState(null);
 
   const submit = async (opt) => {
-    if (submitted) return;
+    if (submitted || checking) return;
     setSelected(opt);
-    setSubmitted(true);
+    setChecking(true);
     try {
       const res = await api.post(`/learn/lessons/${lessonId}/check`, { answer: opt });
       setExplanation(res.data.explanation);
@@ -278,7 +279,10 @@ function MultipleChoice({ exercise, onCorrect }) {
       } else {
         setCorrectAnswer(res.data.correct_answer);
       }
-    } catch {}
+      setSubmitted(true);
+    } catch {
+      setChecking(false);
+    }
   };
 
   const isCorrect = (opt) => submitted && correctAnswer && opt.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
@@ -292,13 +296,15 @@ function MultipleChoice({ exercise, onCorrect }) {
           <button
             key={opt}
             onClick={() => submit(opt)}
-            disabled={submitted}
+            disabled={submitted || checking}
             className={`w-full text-left px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all ${
               isCorrect(opt)
                 ? "border-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300"
                 : isWrong(opt)
                 ? "border-red-400 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300"
-                : submitted
+                : checking && opt === selected
+                ? "border-[#002FA7] bg-blue-50 dark:bg-blue-900/20 text-[#002FA7]"
+                : submitted || checking
                 ? "border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
                 : "border-gray-200 dark:border-gray-700 hover:border-[#002FA7] hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-900 dark:text-white"
             }`}
@@ -306,6 +312,7 @@ function MultipleChoice({ exercise, onCorrect }) {
             <span className="flex items-center gap-2">
               {isCorrect(opt) && <CheckCircle size={16} weight="fill" className="text-emerald-500 shrink-0" />}
               {isWrong(opt) && <X size={16} weight="bold" className="text-red-500 shrink-0" />}
+              {checking && opt === selected && <span className="w-4 h-4 border-2 border-[#002FA7] border-t-transparent rounded-full animate-spin shrink-0" />}
               {opt}
             </span>
           </button>
