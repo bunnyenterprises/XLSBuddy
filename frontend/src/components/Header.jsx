@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useTheme } from "@/context/ThemeContext";
+import { XLSBuddyIcon } from "@/components/XLSBuddyLogo";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -34,10 +35,10 @@ export const Header = () => {
     <header className="sticky top-0 z-40 bg-white dark:bg-[#162038] dark:border-white/10 border-b border-foreground/15" data-testid="app-header">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
         <Link to={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group" data-testid="brand-link">
-          <div className="w-9 h-9 rounded-lg bg-[#002FA7] flex items-center justify-center shrink-0">
-            <span className="text-white font-black text-sm tracking-tight">XB</span>
-          </div>
-          <span className="font-black tracking-tight text-lg dark:text-white whitespace-nowrap">XLS<span className="klein">Buddy</span></span>
+          <XLSBuddyIcon size={36} />
+          <span className="font-black tracking-tight text-lg whitespace-nowrap">
+            <span className="text-gray-900 dark:text-white">XLS</span><span className="text-[#16a34a]">Buddy</span>
+          </span>
         </Link>
 
         {user && (

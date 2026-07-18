@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { ArrowRight } from "@phosphor-icons/react";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { XLSBuddyIcon } from "@/components/XLSBuddyLogo";
 
 export default function Signup() {
   const { signup, googleLogin } = useAuth();
@@ -98,10 +99,8 @@ export default function Signup() {
       {/* Right panel */}
       <div className="bg-klein text-white p-12 lg:p-16 hidden lg:flex flex-col justify-between order-1 lg:order-2">
         <Link to="/" className="flex items-center gap-2" data-testid="signup-brand">
-          <div className="w-8 h-8 bg-white rounded flex items-center justify-center shrink-0">
-            <span className="font-black text-[#002FA7] text-sm">XB</span>
-          </div>
-          <span className="font-black tracking-tight whitespace-nowrap">XLSBuddy</span>
+          <XLSBuddyIcon size={34} />
+          <span className="font-black tracking-tight whitespace-nowrap text-white">XLS<span className="text-[#4ade80]">Buddy</span></span>
         </Link>
         <div>
           <h1 className="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
