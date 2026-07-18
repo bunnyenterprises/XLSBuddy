@@ -16,6 +16,7 @@ export default function Reviews() {
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   const load = async () => {
     const [r, c] = await Promise.all([api.get("/reviews"), api.get("/config")]);
@@ -43,7 +44,8 @@ export default function Reviews() {
     setSubmitting(true);
     try {
       await api.post("/reviews", { rating, comment: comment.trim() });
-      toast.success(myReview ? "Review updated" : "Thanks for your review!");
+      toast.success(myReview ? "Review updated!" : "Thanks for your review!");
+      setEditing(false);
       await load();
     } catch (e) {
       toast.error(e.response?.data?.detail || "Failed to submit");
@@ -105,44 +107,75 @@ export default function Reviews() {
           )}
         </div>
 
-        {/* Submit form */}
+        {/* Submit / Review form */}
         {user ? (
-          <div className="border border-foreground/15 p-8 bg-white mb-12 max-w-2xl" data-testid="review-form">
-            <div className="overline klein mb-4">{myReview ? "UPDATE YOUR REVIEW" : "LEAVE A REVIEW"}</div>
-            <div className="mb-4">
-              <div className="overline mb-2">YOUR RATING</div>
-              <div className="flex gap-1" onMouseLeave={() => setHover(0)}>
-                {[1,2,3,4,5].map((i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => setRating(i)}
-                    onMouseEnter={() => setHover(i)}
-                    data-testid={`rating-star-${i}`}
-                    className="p-1"
-                  >
-                    <Star size={32} weight={(hover || rating) >= i ? "fill" : "regular"} className={(hover || rating) >= i ? "klein" : "text-foreground/20"} />
-                  </button>
-                ))}
+          myReview && !editing ? (
+            /* Submitted — show compact card with Edit button */
+            <div className="border border-foreground/15 p-6 bg-white mb-12 max-w-2xl flex items-start justify-between gap-4" data-testid="review-submitted">
+              <div>
+                <div className="overline klein mb-2">YOUR REVIEW</div>
+                <div className="flex gap-0.5 mb-2">
+                  {[1,2,3,4,5].map((i) => (
+                    <Star key={i} size={16} weight={i <= myReview.rating ? "fill" : "regular"} className={i <= myReview.rating ? "klein" : "text-foreground/20"} />
+                  ))}
+                </div>
+                <p className="text-sm text-muted-foreground">{myReview.comment}</p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-none shrink-0"
+                onClick={() => setEditing(true)}
+              >
+                Edit review
+              </Button>
+            </div>
+          ) : (
+            /* New or editing — show full form */
+            <div className="border border-foreground/15 p-8 bg-white mb-12 max-w-2xl" data-testid="review-form">
+              <div className="overline klein mb-4">{myReview ? "UPDATE YOUR REVIEW" : "LEAVE A REVIEW"}</div>
+              <div className="mb-4">
+                <div className="overline mb-2">YOUR RATING</div>
+                <div className="flex gap-1" onMouseLeave={() => setHover(0)}>
+                  {[1,2,3,4,5].map((i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setRating(i)}
+                      onMouseEnter={() => setHover(i)}
+                      data-testid={`rating-star-${i}`}
+                      className="p-1"
+                    >
+                      <Star size={32} weight={(hover || rating) >= i ? "fill" : "regular"} className={(hover || rating) >= i ? "klein" : "text-foreground/20"} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <Textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Tell us what you love (or what we could improve)…"
+                className="rounded-none border-foreground/30 min-h-[120px]"
+                maxLength={1000}
+                data-testid="review-comment-input"
+              />
+              <div className="flex gap-3 mt-4">
+                <Button
+                  onClick={submit}
+                  disabled={submitting}
+                  className="rounded-none bg-klein hover:bg-[#002FA7]/90 text-white h-12"
+                  data-testid="review-submit-button"
+                >
+                  {submitting ? "Submitting…" : (myReview ? "Update review" : "Submit review")}
+                </Button>
+                {myReview && (
+                  <Button variant="outline" className="rounded-none h-12" onClick={() => { setEditing(false); setRating(myReview.rating); setComment(myReview.comment); }}>
+                    Cancel
+                  </Button>
+                )}
               </div>
             </div>
-            <Textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Tell us what you love (or what we could improve)…"
-              className="rounded-none border-foreground/30 min-h-[120px]"
-              maxLength={1000}
-              data-testid="review-comment-input"
-            />
-            <Button
-              onClick={submit}
-              disabled={submitting}
-              className="rounded-none bg-klein hover:bg-[#002FA7]/90 text-white h-12 mt-4"
-              data-testid="review-submit-button"
-            >
-              {submitting ? "Submitting…" : (myReview ? "Update review" : "Submit review")}
-            </Button>
-          </div>
+          )
         ) : (
           <div className="border border-foreground/15 p-6 bg-secondary mb-12 max-w-2xl text-sm">
             <a href="/login" className="klein font-bold underline">Sign in</a> to leave a review.
