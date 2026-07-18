@@ -5,7 +5,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import {
   UploadSimple, Sparkle, X, ArrowRight, FileXls, Table,
-  ChatCircleDots, PencilSimple, DownloadSimple, MagicWand,
+  ChatCircleDots, DownloadSimple, PencilSimple,
 } from "@phosphor-icons/react";
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
@@ -40,33 +40,26 @@ function buildContext(sheetData, sheetName, maxRows = 60) {
   let ctx = `Sheet: "${sheetName}" | ${headers.length} columns | ${totalRows} rows total\n\n`;
   ctx += "COLUMNS: " + headers.join(" | ") + "\n\n";
   ctx += "DATA (first " + Math.min(rows.length, maxRows) + " rows):\n";
-  rows.forEach((row, i) => {
-    ctx += `Row ${i + 1}: ` + row.join(" | ") + "\n";
-  });
+  rows.forEach((row, i) => { ctx += `Row ${i + 1}: ` + row.join(" | ") + "\n"; });
   return ctx;
 }
 
-// Convert 2D array to CSV string
 function arrayToCSV(data) {
   return data.map(row =>
     row.map(cell => {
       const s = String(cell ?? "");
       return s.includes(",") || s.includes('"') || s.includes("\n")
-        ? `"${s.replace(/"/g, '""')}"`
-        : s;
+        ? `"${s.replace(/"/g, '""')}"` : s;
     }).join(",")
   ).join("\n");
 }
 
-// Parse CSV string back to 2D array
 function csvToArray(csv) {
   const rows = [];
-  const lines = csv.split("\n");
-  for (const line of lines) {
+  for (const line of csv.split("\n")) {
     if (!line.trim()) continue;
     const row = [];
-    let cur = "";
-    let inQuotes = false;
+    let cur = "", inQuotes = false;
     for (let i = 0; i < line.length; i++) {
       const ch = line[i];
       if (ch === '"') {
@@ -74,14 +67,18 @@ function csvToArray(csv) {
         else { inQuotes = !inQuotes; }
       } else if (ch === "," && !inQuotes) {
         row.push(cur); cur = "";
-      } else {
-        cur += ch;
-      }
+      } else { cur += ch; }
     }
     row.push(cur);
     rows.push(row);
   }
   return rows;
+}
+
+// Detect if the user's message is an edit instruction vs a question
+const EDIT_KEYWORDS = /\b(add|sort|remove|delete|rename|fill|replace|insert|move|filter|clear|convert|update|change|fix|calculate|format|append|merge|split|trim|lowercase|uppercase|duplicate|reorder|swap)\b/i;
+function isEditIntent(text) {
+  return EDIT_KEYWORDS.test(text);
 }
 
 // ─── SPREADSHEET TABLE ────────────────────────────────────────────────────────
@@ -90,7 +87,6 @@ function SpreadsheetTable({ data }) {
   if (!data || data.length === 0) return (
     <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">No data in this sheet.</div>
   );
-
   const headers = data[0] || [];
   const rows = data.slice(1);
   const cols = ["", ...headers.map((_, i) => String.fromCharCode(65 + (i % 26)))];
@@ -143,7 +139,6 @@ export default function ExcelAnalyzer() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
-  const [mode, setMode] = useState("analyze"); // "analyze" | "edit"
   const [hasEdits, setHasEdits] = useState(false);
   const [originalFileName, setOriginalFileName] = useState("");
   const fileRef = useRef(null);
@@ -166,7 +161,7 @@ export default function ExcelAnalyzer() {
       setHasEdits(false);
       setMessages([{
         role: "assistant",
-        text: `✅ **${f.name}** loaded — ${wb.sheetNames.length} sheet(s), ${wb.sheets[wb.sheetNames[0]].length - 1} rows in "${wb.sheetNames[0]}".\n\nUse **Ask AI** to analyze your data, or switch to **Edit with AI** to modify it.`,
+        text: `✅ **${f.name}** loaded — ${wb.sheetNames.length} sheet(s), ${wb.sheets[wb.sheetNames[0]].length - 1} rows in "${wb.sheetNames[0]}". Ask me anything or tell me what to change!`,
       }]);
     } catch {
       toast.error("Could not read file. Make sure it's a valid Excel or CSV.");
@@ -190,9 +185,9 @@ export default function ExcelAnalyzer() {
     setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 50);
 
     const sheetData = workbook.sheets[activeSheet] || [];
+    const editMode = isEditIntent(q);
 
-    if (mode === "edit") {
-      // Send full data as CSV for editing
+    if (editMode) {
       const csvData = arrayToCSV(sheetData);
       try {
         const { data } = await api.post("/excel/edit", {
@@ -200,28 +195,22 @@ export default function ExcelAnalyzer() {
           csv_data: csvData,
           sheet_name: activeSheet,
         });
-
         const newData = csvToArray(data.modified_csv);
         if (newData.length > 0) {
-          // Apply changes to workbook
-          setWorkbook(prev => ({
-            ...prev,
-            sheets: { ...prev.sheets, [activeSheet]: newData },
-          }));
+          setWorkbook(prev => ({ ...prev, sheets: { ...prev.sheets, [activeSheet]: newData } }));
           setHasEdits(true);
           setMessages(prev => [...prev, {
             role: "assistant",
-            text: `✅ Done! ${data.explanation}\n\nThe table above has been updated. Click **Download modified file** when ready.`,
+            text: `✅ Done! ${data.explanation}\n\nThe table has been updated. Click **Download modified file** when ready.`,
             isEdit: true,
           }]);
         } else {
-          setMessages(prev => [...prev, { role: "assistant", text: "Could not apply changes. Please try rephrasing your instruction." }]);
+          setMessages(prev => [...prev, { role: "assistant", text: "Could not apply that change. Please try rephrasing." }]);
         }
       } catch (e) {
         setMessages(prev => [...prev, { role: "assistant", text: e.response?.data?.detail || "Error applying edit. Please try again." }]);
       }
     } else {
-      // Analyze mode
       const context = buildContext(sheetData, activeSheet);
       try {
         const { data } = await api.post("/excel/analyze", { question: q, context });
@@ -248,13 +237,8 @@ export default function ExcelAnalyzer() {
   };
 
   const reset = () => {
-    setFile(null);
-    setWorkbook(null);
-    setActiveSheet(null);
-    setMessages([]);
-    setInput("");
-    setHasEdits(false);
-    setMode("analyze");
+    setFile(null); setWorkbook(null); setActiveSheet(null);
+    setMessages([]); setInput(""); setHasEdits(false);
   };
 
   const currentData = workbook?.sheets[activeSheet] || [];
@@ -272,14 +256,11 @@ export default function ExcelAnalyzer() {
           <div>
             <div className="text-[10px] font-bold tracking-[0.2em] text-[#002FA7] mb-1">EXCEL ANALYZER</div>
             <h1 className="text-2xl font-extrabold tracking-tight dark:text-white">Upload & Work with Your Spreadsheet</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Analyze data or let AI make changes — then download the result</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Ask questions or tell AI what to change — all in one chat</p>
           </div>
           <div className="flex items-center gap-2">
             {hasEdits && (
-              <button
-                onClick={downloadModified}
-                className="flex items-center gap-2 bg-[#217346] text-white px-4 py-2 text-sm font-bold hover:bg-[#1a5e38] transition-colors"
-              >
+              <button onClick={downloadModified} className="flex items-center gap-2 bg-[#217346] text-white px-4 py-2 text-sm font-bold hover:bg-[#1a5e38] transition-colors">
                 <DownloadSimple size={16} weight="bold" /> Download modified file
               </button>
             )}
@@ -344,11 +325,8 @@ export default function ExcelAnalyzer() {
               {workbook.sheetNames.length > 1 && (
                 <div className="flex border-b border-foreground/10 bg-slate-50 dark:bg-slate-800 overflow-x-auto">
                   {workbook.sheetNames.map((name) => (
-                    <button
-                      key={name}
-                      onClick={() => setActiveSheet(name)}
-                      className={`px-4 py-2 text-xs font-semibold border-r border-foreground/10 whitespace-nowrap transition-colors ${activeSheet === name ? "bg-white dark:bg-slate-900 text-[#217346] border-b-2 border-b-[#217346]" : "text-slate-500 hover:bg-white/50 dark:hover:bg-slate-700"}`}
-                    >
+                    <button key={name} onClick={() => setActiveSheet(name)}
+                      className={`px-4 py-2 text-xs font-semibold border-r border-foreground/10 whitespace-nowrap transition-colors ${activeSheet === name ? "bg-white dark:bg-slate-900 text-[#217346] border-b-2 border-b-[#217346]" : "text-slate-500 hover:bg-white/50 dark:hover:bg-slate-700"}`}>
                       {name}
                     </button>
                   ))}
@@ -359,38 +337,20 @@ export default function ExcelAnalyzer() {
 
               <div className="bg-[#217346] px-4 py-1 text-[10px] text-white/70 flex items-center gap-4">
                 <span>Sheet: {activeSheet}</span>
-                <span>·</span>
-                <span>{rowCount} rows</span>
-                <span>·</span>
-                <span>{colCount} columns</span>
-                {rowCount > 60 && mode === "analyze" && <span className="text-yellow-300">· AI analyzes first 60 rows</span>}
+                <span>·</span><span>{rowCount} rows</span>
+                <span>·</span><span>{colCount} columns</span>
+                {rowCount > 60 && <span className="text-yellow-300">· AI analyzes first 60 rows</span>}
               </div>
             </div>
 
             {/* Right: AI Chat */}
             <div className="flex flex-col w-full lg:w-[400px] shrink-0 border border-foreground/10 bg-white dark:bg-slate-900">
 
-              {/* Mode toggle */}
-              <div className="border-b border-foreground/10 p-2 bg-slate-50 dark:bg-slate-800 flex gap-1">
-                <button
-                  onClick={() => { setMode("analyze"); setInput(""); }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold transition-colors ${mode === "analyze" ? "bg-[#002FA7] text-white" : "text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
-                >
-                  <ChatCircleDots size={14} weight="fill" /> Ask AI
-                </button>
-                <button
-                  onClick={() => { setMode("edit"); setInput(""); }}
-                  className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold transition-colors ${mode === "edit" ? "bg-[#217346] text-white" : "text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700"}`}
-                >
-                  <MagicWand size={14} weight="fill" /> Edit with AI
-                </button>
-              </div>
-
-              {/* Mode description */}
-              <div className={`px-3 py-2 text-[10px] font-medium border-b border-foreground/10 ${mode === "edit" ? "bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300" : "bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300"}`}>
-                {mode === "edit"
-                  ? "✏️ Edit mode — AI will modify your spreadsheet. Changes are applied live."
-                  : "💬 Ask mode — AI will answer questions about your data."}
+              {/* Chat header */}
+              <div className="border-b border-foreground/10 px-4 py-3 bg-slate-50 dark:bg-slate-800 flex items-center gap-2">
+                <ChatCircleDots size={16} className="text-[#002FA7]" weight="fill" />
+                <span className="text-sm font-bold dark:text-white">AI Assistant</span>
+                <span className="ml-auto text-[10px] text-slate-400">Ask questions or request changes</span>
               </div>
 
               {/* Messages */}
@@ -399,20 +359,20 @@ export default function ExcelAnalyzer() {
                   <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                     {m.role === "assistant" && (
                       <div className={`w-6 h-6 flex items-center justify-center shrink-0 mr-2 mt-0.5 ${m.isEdit ? "bg-[#217346]" : "bg-[#002FA7]"}`}>
-                        {m.isEdit ? <PencilSimple size={12} className="text-white" weight="fill" /> : <Sparkle size={12} className="text-white" weight="fill" />}
+                        {m.isEdit
+                          ? <PencilSimple size={12} className="text-white" weight="fill" />
+                          : <Sparkle size={12} className="text-white" weight="fill" />}
                       </div>
                     )}
-                    <div
-                      className={`max-w-[85%] px-3 py-2.5 text-sm leading-6 ${m.role === "user" ? (mode === "edit" ? "bg-[#217346] text-white" : "bg-[#002FA7] text-white") : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100"}`}
-                      style={{ whiteSpace: "pre-wrap" }}
-                    >
+                    <div className={`max-w-[85%] px-3 py-2.5 text-sm leading-6 ${m.role === "user" ? "bg-[#002FA7] text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-100"}`}
+                      style={{ whiteSpace: "pre-wrap" }}>
                       {m.text}
                     </div>
                   </div>
                 ))}
                 {aiLoading && (
                   <div className="flex justify-start">
-                    <div className={`w-6 h-6 flex items-center justify-center shrink-0 mr-2 ${mode === "edit" ? "bg-[#217346]" : "bg-[#002FA7]"}`}>
+                    <div className="w-6 h-6 bg-[#002FA7] flex items-center justify-center shrink-0 mr-2">
                       <Sparkle size={12} className="text-white" weight="fill" />
                     </div>
                     <div className="bg-slate-100 dark:bg-slate-800 px-4 py-3 flex gap-1 items-center">
@@ -426,21 +386,16 @@ export default function ExcelAnalyzer() {
               {/* Quick prompts */}
               {messages.length <= 1 && (
                 <div className="px-4 pb-2 flex flex-wrap gap-1.5">
-                  {mode === "analyze" ? [
+                  {[
                     "Summarize this data",
-                    "Find duplicate rows",
                     "What are the totals?",
-                    "Which row has max value?",
-                    "Suggest a formula",
-                  ] : [
                     "Sort by first column A→Z",
                     "Add a Total column",
                     "Remove duplicate rows",
-                    "Add a Serial No column",
                     "Fill blank cells with 0",
                   ].map(q => (
                     <button key={q} onClick={() => setInput(q)}
-                      className={`text-[10px] font-semibold px-2.5 py-1 border transition-colors ${mode === "edit" ? "border-[#217346]/30 text-[#217346] hover:bg-[#217346]/5 dark:text-emerald-300 dark:border-emerald-700" : "border-[#002FA7]/30 text-[#002FA7] hover:bg-[#002FA7]/5 dark:text-blue-300 dark:border-blue-700"}`}>
+                      className="text-[10px] font-semibold px-2.5 py-1 border border-[#002FA7]/30 text-[#002FA7] hover:bg-[#002FA7]/5 transition-colors dark:text-blue-300 dark:border-blue-700">
                       {q}
                     </button>
                   ))}
@@ -451,17 +406,14 @@ export default function ExcelAnalyzer() {
               <div className="border-t border-foreground/10 p-3 flex gap-2">
                 <input
                   className="flex-1 border border-foreground/20 bg-white dark:bg-slate-800 dark:text-white px-3 py-2 text-sm outline-none focus:border-[#002FA7] transition-colors"
-                  placeholder={mode === "edit" ? "Tell AI what to change…" : "Ask anything about your data…"}
+                  placeholder="Ask a question or say what to change…"
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) sendMessage(); }}
                   disabled={aiLoading}
                 />
-                <button
-                  onClick={sendMessage}
-                  disabled={aiLoading || !input.trim()}
-                  className={`text-white px-3 py-2 disabled:opacity-40 transition-colors ${mode === "edit" ? "bg-[#217346] hover:bg-[#1a5e38]" : "bg-[#002FA7] hover:bg-[#002FA7]/90"}`}
-                >
+                <button onClick={sendMessage} disabled={aiLoading || !input.trim()}
+                  className="bg-[#002FA7] text-white px-3 py-2 hover:bg-[#002FA7]/90 disabled:opacity-40 transition-colors">
                   <ArrowRight size={16} weight="bold" />
                 </button>
               </div>
