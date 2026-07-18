@@ -3,18 +3,18 @@ import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ChartLine, BookOpen, ChatCircleDots, MagnifyingGlass, BookmarkSimple, ArrowUpRight, Sparkle } from "@phosphor-icons/react";
+import { ChartLine, BookOpen, ChatCircleDots, MagnifyingGlass, BookmarkSimple, ArrowUpRight, Sparkle, GraduationCap } from "@phosphor-icons/react";
 
 export default function Dashboard() {
   const { user } = useAuth();
 
   const tiles = [
+    { to: "/learn",               title: "Learn Excel",            desc: "Structured paths from beginner to advanced with AI coach.", icon: GraduationCap },
     { to: "/functions",           title: "Excel Functions",        desc: "Browse 60+ functions with examples and use cases.", icon: ChartLine },
     { to: "/chat",                title: "AI Chat",                desc: "Ask anything about Excel and get instant answers.", icon: ChatCircleDots },
     { to: "/tutorials",           title: "Tutorials",              desc: "Step-by-step guides for every skill level.", icon: BookOpen },
     { to: "/bookmarks",           title: "Bookmarks",              desc: "Your saved functions for quick access.", icon: BookmarkSimple },
     { to: "/formula-generator",   title: "Formula Generator",      desc: "Describe what you need and get a formula instantly.", icon: Sparkle },
-    { to: "/functions?focus=search", title: "Quick Search",        desc: "Find any Excel function instantly.", icon: MagnifyingGlass },
   ];
 
   return (

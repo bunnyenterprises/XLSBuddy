@@ -34,7 +34,7 @@ export default function PrivacyPolicy() {
 
         <Section title="1. Who We Are">
           <p>XLSBuddy ("we", "our", "us") is an Excel learning platform operated by Bunny Enterprises. We provide Excel function references, AI-assisted learning, tutorials, and productivity tools at <strong>xlsbuddy.com</strong>.</p>
-          <p>For privacy questions, contact us at: <a href="mailto:rajel88@gmail.com" className="text-[#002FA7] underline font-medium">rajel88@gmail.com</a></p>
+          <p>For privacy questions, contact us at: <a href="mailto:xlsbuddy@gmail.com" className="text-[#002FA7] underline font-medium">xlsbuddy@gmail.com</a></p>
         </Section>
 
         <Section title="2. Information We Collect">
@@ -130,7 +130,7 @@ export default function PrivacyPolicy() {
             <li><strong>Deletion</strong> — request we delete your account and personal data</li>
             <li><strong>Portability</strong> — request your data in a machine-readable format</li>
           </ul>
-          <p>To exercise any of these rights, email us at <a href="mailto:rajel88@gmail.com" className="text-[#002FA7] underline font-medium">rajel88@gmail.com</a>. We will respond within 30 days.</p>
+          <p>To exercise any of these rights, email us at <a href="mailto:xlsbuddy@gmail.com" className="text-[#002FA7] underline font-medium">xlsbuddy@gmail.com</a>. We will respond within 30 days.</p>
         </Section>
 
         <Section title="8. Children's Privacy">
@@ -156,7 +156,7 @@ export default function PrivacyPolicy() {
           <p>For any privacy concerns, data requests, or questions about this policy:</p>
           <div className="bg-slate-50 dark:bg-slate-900 border border-foreground/10 p-5 mt-3">
             <p className="font-bold text-slate-900 dark:text-white">XLSBuddy / Bunny Enterprises</p>
-            <p>Email: <a href="mailto:rajel88@gmail.com" className="text-[#002FA7] underline">rajel88@gmail.com</a></p>
+            <p>Email: <a href="mailto:xlsbuddy@gmail.com" className="text-[#002FA7] underline">xlsbuddy@gmail.com</a></p>
             <p>Website: <a href="https://xlsbuddy.com" className="text-[#002FA7] underline">xlsbuddy.com</a></p>
           </div>
         </Section>
