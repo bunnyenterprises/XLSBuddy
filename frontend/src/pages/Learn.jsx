@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, Lock, CheckCircle, ArrowRight, Lightning, Trophy, Star, ChatCircleDots, Sparkle, MagnifyingGlass } from "@phosphor-icons/react";
+import { BookOpen, Lock, CheckCircle, ArrowRight, Lightning, Trophy, Star, ChatCircleDots, Sparkle } from "@phosphor-icons/react";
 import api from "@/lib/api";
 import { Header } from "@/components/Header";
 
@@ -238,7 +238,6 @@ export default function Learn() {
             {[
               { to: "/chat", icon: ChatCircleDots, label: "Ask AI", desc: "Any Excel question" },
               { to: "/formula-generator", icon: Sparkle, label: "Formula Generator", desc: "Describe & get formula" },
-              { to: "/excel-analyzer", icon: MagnifyingGlass, label: "Analyze Excel", desc: "Upload your file" },
               { to: "/functions", icon: BookOpen, label: "Function Library", desc: "60+ functions" },
             ].map((t) => {
               const Icon = t.icon;
