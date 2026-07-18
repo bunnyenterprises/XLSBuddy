@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, Lock, CheckCircle, ArrowRight, Lightning, Trophy, Star } from "@phosphor-icons/react";
 import api from "@/lib/api";
+import { Header } from "@/components/Header";
 
 const LEVEL_COLORS = {
   beginner: { bg: "bg-emerald-50 dark:bg-emerald-900/20", border: "border-emerald-200 dark:border-emerald-800", badge: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300" },
@@ -141,6 +142,7 @@ export default function Learn() {
 
   return (
     <div className="min-h-screen page-bg">
+      <Header />
       <div className="max-w-5xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="mb-10">
