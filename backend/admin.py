@@ -301,4 +301,21 @@ def build_admin_router(db: AsyncIOMotorDatabase) -> APIRouter:
         )
         return {"ok": True, "is_trial": True, "trial_expires_at": expires.isoformat()}
 
+    @router.post("/payments/cancel-trial")
+    async def cancel_trial(user_id: str = Depends(get_current_user_id)):
+        user = await db.users.find_one({"id": user_id})
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        if not user.get("is_trial"):
+            raise HTTPException(status_code=400, detail="No active trial to cancel")
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": {
+                "is_pro": False,
+                "is_trial": False,
+                "trial_expires_at": None,
+            }}
+        )
+        return {"ok": True}
+
     return router

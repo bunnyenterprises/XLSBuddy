@@ -138,6 +138,25 @@ export default function Pricing() {
           >
             {loading ? "Opening checkout…" : <><Sparkle size={16} weight="fill" className="mr-2" /> Upgrade to Pro — ₹{price}/mo</>}
           </Button>
+          <button
+            onClick={async () => {
+              if (!window.confirm("Cancel your free trial and return to the Free plan?")) return;
+              setLoading(true);
+              try {
+                await api.post("/payments/cancel-trial");
+                toast.success("Trial cancelled. You're back on the Free plan.");
+                setTimeout(() => window.location.reload(), 1200);
+              } catch (e) {
+                toast.error(e.response?.data?.detail || "Could not cancel trial");
+              } finally {
+                setLoading(false);
+              }
+            }}
+            disabled={loading}
+            className="w-full text-xs text-white/40 hover:text-white/70 underline py-1 transition-colors"
+          >
+            Cancel trial
+          </button>
         </div>
       );
     }
