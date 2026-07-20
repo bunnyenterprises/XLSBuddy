@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { ChartLine, BookOpen, ChatCircleDots, MagnifyingGlass, BookmarkSimple, ArrowUpRight, Sparkle, GraduationCap } from "@phosphor-icons/react";
+import { ChartLine, BookOpen, ChatCircleDots, BookmarkSimple, ArrowUpRight, Sparkle, GraduationCap } from "@phosphor-icons/react";
 
 export default function Dashboard() {
   const { user } = useAuth();

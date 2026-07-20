@@ -7,7 +7,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, EmailStr
-from typing import List, Optional
+from typing import Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 
@@ -131,7 +131,6 @@ async def get_optional_user(request: Request) -> Optional[dict]:
 
 # ============= AUTH =============
 def public_user(user: dict) -> dict:
-    from datetime import timedelta
     trial_expires = user.get("trial_expires_at")
     trial_active = False
     if trial_expires and user.get("is_trial"):

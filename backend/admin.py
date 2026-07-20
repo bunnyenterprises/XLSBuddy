@@ -4,7 +4,7 @@ import uuid
 import hmac
 import hashlib
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Optional, List
 
 from fastapi import APIRouter, HTTPException, Depends
@@ -279,7 +279,6 @@ def build_admin_router(db: AsyncIOMotorDatabase) -> APIRouter:
 
     @router.post("/payments/start-trial")
     async def start_trial(user_id: str = Depends(get_current_user_id)):
-        from datetime import timedelta
         user = await db.users.find_one({"id": user_id})
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
